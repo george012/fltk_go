@@ -122,8 +122,8 @@ func main() {
 		cmakeGenerator = "Unix Makefiles"
 	}
 
-	cmakeCmd := exec.Command(
-		"cmake", "-G", cmakeGenerator, "-S", "fltk", "-B", "build",
+	cmakeCmdArgs := []string{
+		"-G", cmakeGenerator, "-S", "fltk", "-B", "build",
 		"-DCMAKE_BUILD_TYPE=Release",
 		"-DFLTK_BUILD_TEST=OFF",
 		"-DFLTK_BUILD_EXAMPLES=OFF",
@@ -133,22 +133,39 @@ func main() {
 		"-DOPTION_USE_SYSTEM_LIBJPEG=OFF",
 		"-DOPTION_USE_SYSTEM_LIBPNG=OFF",
 		"-DOPTION_USE_SYSTEM_ZLIB=OFF",
-		"-DCMAKE_INSTALL_PREFIX="+currentDir,
+		"-DCMAKE_INSTALL_PREFIX=" + currentDir,
 		"-DCMAKE_INSTALL_INCLUDEDIR=include",
-		"-DCMAKE_INSTALL_LIBDIR="+libdir,
-		"-DFLTK_INCLUDEDIR="+filepath.Join(currentDir, "include"),
-		"-DFLTK_LIBDIR="+filepath.Join(currentDir, "lib", runtime.GOOS, runtime.GOARCH))
+		"-DCMAKE_INSTALL_LIBDIR=" + libdir,
+		"-DFLTK_INCLUDEDIR=" + filepath.Join(currentDir, "include"),
+		"-DFLTK_LIBDIR=" + filepath.Join(currentDir, "lib", runtime.GOOS, runtime.GOARCH),
+	}
 
 	if runtime.GOOS == "darwin" {
+		cmakeCmdArgs = append(cmakeCmdArgs, "-DCMAKE_OSX_DEPLOYMENT_TARGET=12.0")
+		//// Get the SDK path using xcrun
+		//sdkPathCmd := exec.Command("xcrun", "--sdk", "macosx", "--show-sdk-path")
+		//sdkPathOutput, err := sdkPathCmd.Output()
+		//if err != nil {
+		//	fmt.Printf("Error getting SDK path, %v\n", err)
+		//	os.Exit(1)
+		//}
+		//sdkPath := strings.TrimSpace(string(sdkPathOutput))
+		//
+		//cmakeCmdArgs = append(cmakeCmdArgs, "-DCMAKE_OSX_SYSROOT="+sdkPath)
+
+		cmakeCmdArgs = append(cmakeCmdArgs, "-DCMAKE_OSX_SYSROOT="+"/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk")
 		if runtime.GOARCH == "amd64" {
-			cmakeCmd.Args = append(cmakeCmd.Args, "-DCMAKE_OSX_ARCHITECTURES=x86_64")
+			cmakeCmdArgs = append(cmakeCmdArgs, "-DCMAKE_OSX_ARCHITECTURES=x86_64")
 		} else if runtime.GOARCH == "arm64" {
-			cmakeCmd.Args = append(cmakeCmd.Args, "-DCMAKE_OSX_ARCHITECTURES=arm64")
+			cmakeCmdArgs = append(cmakeCmdArgs, "-DCMAKE_OSX_ARCHITECTURES=arm64")
 		} else {
 			fmt.Printf("Unsupported MacOS architecture, %s\n", runtime.GOARCH)
 			os.Exit(1)
 		}
 	}
+
+	cmakeCmd := exec.Command("cmake", cmakeCmdArgs...)
+
 	cmakeCmd.Dir = "fltk_build"
 	cmakeCmd.Stdout = os.Stdout
 	cmakeCmd.Stderr = os.Stderr
