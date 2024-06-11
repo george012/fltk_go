@@ -41,6 +41,9 @@ jobs:
         shell: bash
         run: |
           choco install mingw --version 11.2.0.07112021 --allow-downgrade
+          echo "export PATH=/c/tools/mingw64/bin:\$PATH" >> $GITHUB_ENV
+          echo "export CXX=x86_64-w64-mingw32-g++" >> $GITHUB_ENV
+          echo "export CC=x86_64-w64-mingw32-gcc" >> $GITHUB_ENV
 
       - name: do testing
         shell: bash
