@@ -36,19 +36,19 @@ jobs:
         run: |
           sudo apt-get update && sudo apt-get install -y libpango1.0-dev libx11-dev libxext-dev libxft-dev libxinerama-dev libxcursor-dev libxrender-dev libxfixes-dev libpng-dev libgl1-mesa-dev libglu1-mesa-dev
 
-      - name: Set BUILD envs for Windows
+      - name: Set BUILD envs for Windows using MSYS2
         if: matrix.os == 'windows-latest'
         shell: bash
         run: |
-          choco install mingw --version 11.2.0.07112021 --allow-downgrade
-          echo "export PATH=/c/tools/mingw64/bin:\$PATH" >> $GITHUB_ENV
-          echo "export CXX=x86_64-w64-mingw32-g++" >> $GITHUB_ENV
-          echo "export CC=x86_64-w64-mingw32-gcc" >> $GITHUB_ENV
+          choco install msys2
+          /c/tools/msys64/usr/bin/bash -lc "pacman -Sy --noconfirm"
+          /c/tools/msys64/usr/bin/bash -lc "pacman -S --noconfirm mingw-w64-x86_64-toolchain"
+          echo "export PATH=/c/tools/msys64/mingw64/bin:/c/tools/msys64/usr/bin:\$PATH" >> ${GITHUB_ENV}
 
       - name: do testing
         shell: bash
         run: |
-          go test
+          go test -v ./...
 
   Release:
     runs-on: ubuntu-latest
@@ -61,7 +61,7 @@ jobs:
 
       - name: Get latest tag
         run: |
-          echo "LATEST_TAG=$(git tag | grep -v '^latest$' | sort -V | tail -n1)" >> $GITHUB_ENV
+          echo "LATEST_TAG=$(git tag | grep -v '^latest$' | sort -V | tail -n1)" >> ${GITHUB_ENV}
 
       - name: Bump version and push tag
         id: tag-version
