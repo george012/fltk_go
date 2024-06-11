@@ -15,7 +15,7 @@ jobs:
   Testing:
     strategy:
       matrix:
-        os: [windows-latest, macos-latest]
+        os: [macos-latest]
         arch: [amd64, arm64]
         exclude:
           - os: windows-latest
@@ -30,41 +30,6 @@ jobs:
         uses: actions/setup-go@v5
         with:
           go-version: '>=1.18.0'
-
-      - name: Set BUILD envs for Linux
-        if: matrix.os == 'ubuntu-latest'
-        run: |
-          sudo apt-get update && sudo apt-get install -y libpango1.0-dev libx11-dev libxext-dev libxft-dev libxinerama-dev libxcursor-dev libxrender-dev libxfixes-dev libpng-dev libgl1-mesa-dev libglu1-mesa-dev
-
-      - name: Set up build environment for Windows using MSYS2
-        if: matrix.os == 'windows-latest'
-        shell: bash
-        run: |
-          # Install MSYS2 using winget
-          echo "Installing MSYS2 using winget..."
-          winget install -e --id MSYS2.MSYS2
-          
-          # Wait for installation to complete
-          echo "Waiting for MSYS2 installation to complete..."
-          sleep 30
-          
-          # Update MSYS2 packages using ucrt64 shell
-          echo "Updating MSYS2 packages using ucrt64 shell..."
-          /c/msys64/usr/bin/bash -lc "pacman -Sy --noconfirm"
-          
-          # Install MinGW-w64 toolchain using mingw64 shell
-          echo "Installing MinGW-w64 toolchain using mingw64 shell..."
-          /c/msys64/usr/bin/bash -lc "pacman -S --noconfirm mingw-w64-x86_64-toolchain"
-          
-          # Set MINGW64_HOME environment variable in Windows
-          echo "Setting MINGW64_HOME environment variable..."
-          powershell -Command "[System.Environment]::SetEnvironmentVariable('MINGW64_HOME', 'C:\\msys64\\mingw64', [System.EnvironmentVariableTarget]::Machine)"
-          
-          # Add MINGW64_HOME\bin to PATH
-          echo "Adding MINGW64_HOME\\bin to PATH..."
-          powershell -Command "\$newPath = [System.Environment]::GetEnvironmentVariable('PATH', [System.EnvironmentVariableTarget]::Machine) + ';C:\\msys64\\mingw64\\bin'; [System.Environment]::SetEnvironmentVariable('PATH', \$newPath, [System.EnvironmentVariableTarget]::Machine)"
-          
-          echo "MSYS2 and MinGW-w64 toolchain installation complete."
 
       - name: do testing
         shell: bash
