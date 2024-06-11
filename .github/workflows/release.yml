@@ -1,0 +1,137 @@
+# This workflow will build a golang project
+# For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-go
+
+name: Go build
+
+env:
+  ProductName: fltk_go
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+jobs:
+  Testing:
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+        arch: [amd64, arm64]
+        exclude:
+          - os: windows-latest
+            arch: arm64
+    runs-on: ${{ matrix.os }}
+
+    steps:
+      - name: CheckOut
+        uses: actions/checkout@v4
+
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: '>=1.18.0'
+
+      - name: Set BUILD envs for Linux
+        if: matrix.os == 'ubuntu-latest'
+        run: |
+          sudo apt-get update && sudo apt-get install -y libpango1.0-dev libx11-dev libxext-dev libxft-dev libxinerama-dev libxcursor-dev libxrender-dev libxfixes-dev libpng-dev libgl1-mesa-dev libglu1-mesa-dev
+
+      - name: Set BUILD envs for Windows
+        if: matrix.os == 'windows-latest'
+        shell: bash
+        run: |
+          choco install mingw --version 11.2.0.07112021 --allow-downgrade
+
+      - name: do testing
+        shell: bash
+        run: |
+          go test
+
+  Release:
+    runs-on: ubuntu-latest
+    needs: Testing
+    outputs:
+      UPLOAD_URL: ${{ steps.stepCreateRelease.outputs.upload_url }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Get latest tag
+        run: |
+          echo "LATEST_TAG=$(git tag | grep -v '^latest$' | sort -V | tail -n1)" >> $GITHUB_ENV
+
+      - name: Bump version and push tag
+        id: tag-version
+        uses: mathieudutour/github-tag-action@v6.2
+        with:
+          tag_prefix: ""
+          custom_tag: ${{ env.LATEST_TAG }}
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Step GitHub release
+        id: stepCreateRelease
+        uses: ncipollo/release-action@v1
+        with:
+          skipIfReleaseExists: 'true'
+          tag: ${{ env.LATEST_TAG }}
+          name: ${{ env.LATEST_TAG }}
+
+  RemoveOldRelease:
+    runs-on: ubuntu-latest
+    needs: Release
+    steps:
+      - name: install github-cli
+        run: |
+          type -p curl >/dev/null || sudo apt install curl -y
+          curl -fsSL https://cli.github.com/packages/githubcli-archive-keyring.gpg | sudo dd of=/usr/share/keyrings/githubcli-archive-keyring.gpg \
+          && sudo chmod go+r /usr/share/keyrings/githubcli-archive-keyring.gpg \
+          && echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/githubcli-archive-keyring.gpg] https://cli.github.com/packages stable main" | sudo tee /etc/apt/sources.list.d/github-cli.list > /dev/null \
+          && sudo apt update \
+          && sudo apt install gh -y
+
+      - name: CheckOut
+        uses: actions/checkout@v4
+
+      - name: Set APP_VERSION env
+        run: |
+          APP_VERSION=$(echo ${GITHUB_REF} | rev | cut -d'/' -f 1 | rev ) \
+
+          function get_pre_del_tag {
+              local v_str=$1
+              baseStr=$(echo $v_str | cut -d'.' -f1)
+              base=${baseStr//v/}
+              major=$(echo $v_str | cut -d'.' -f2)
+              minor=$(echo $v_str | cut -d'.' -f3)
+
+              if ((minor>0)); then
+                  minor=$((minor-1))
+              else
+                  minor=999
+                  if ((major>0)); then
+                      major=$((major-1))
+                  else
+                      major=999
+                      if ((base>0)); then
+                          base=$((base-1))
+                      else
+                          echo "Error: Version cannot be decremented."
+                          exit 1
+                      fi
+                  fi
+              fi
+
+              pre_v_no="v${base}.${major}.${minor}"
+              echo $pre_v_no
+          }
+
+          APP_OLD_VERSION=$(get_pre_del_tag $(get_pre_del_tag $APP_VERSION))
+
+          echo "Old version to remove: ${APP_OLD_VERSION}"
+          echo APP_OLD_VERSION=${APP_OLD_VERSION} >> ${GITHUB_ENV}
+
+      - name: Remove Old Release
+        run: |
+          gh release delete ${{ env.APP_OLD_VERSION }} -y
+          git push origin --delete ${{ env.APP_OLD_VERSION }}
+        env:
+          GH_TOKEN: ${{ github.token }}
