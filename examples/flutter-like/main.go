@@ -3,7 +3,7 @@ package main
 import (
 	"strconv"
 
-	"github.com/pwiecz/go-fltk"
+	"github.com/george012/fltk_go"
 )
 
 // FLTK uses an RGBI color representation, the I is an index into FLTK's color map

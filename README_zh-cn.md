@@ -12,7 +12,7 @@
 # 1. go-fltk
 
 ---
-[![GoDoc](https://img.shields.io/static/v1?label=godoc&message=reference&color=blue)](https://pkg.go.dev/github.com/pwiecz/go-fltk)
+[![GoDoc](https://img.shields.io/static/v1?label=godoc&message=reference&color=blue)](https://pkg.go.dev/github.com/george012/fltk_go)
 
 * [Document](./README.md)
 * [中文文档](./README_zh-cn.md)
@@ -25,7 +25,7 @@
 go-fltk 带有一些架构的预构建 FLTK 库（linux/amd64, windows/amd64），但你也可以轻松地自己重建它们，或者为其他架构构建它们。
 要为你的平台构建 FLTK 库，只需从 go-fltk 源代码树的根目录运行 go generate。
 
-如果构建过程对你不起作用，你可以自行修改 fltk-build.sh 或 fltk-build.bat，或者在 https://github.com/pwiecz/go-fltk/discussions 提出问题。
+如果构建过程对你不起作用，你可以自行修改 fltk-build.sh 或 fltk-build.bat，或者在 https://github.com/george012/fltk_go/discussions 提出问题。
 
 要运行使用 go-fltk 构建的程序，你将需要一些系统库，这些库通常在带有图形用户界面的操作系统上是可用的：
 
@@ -45,7 +45,7 @@ go-fltk 带有一些架构的预构建 FLTK 库（linux/amd64, windows/amd64）�
 ```go
 package main
 
-import "github.com/pwiecz/go-fltk"
+import "github.com/george012/fltk_go"
 
 func main() {
     win := fltk.NewWindow(400, 300)
@@ -79,7 +79,7 @@ package main
 import (
 	"strconv"
 
-	"github.com/pwiecz/go-fltk"
+	"github.com/george012/fltk_go"
 )
 
 // FLTK 使用 RGBI 颜色表示法，其中 I 是 FLTK 颜色表的索引
@@ -147,7 +147,7 @@ package main
 import (
 	"fmt"
 
-	"github.com/pwiecz/go-fltk"
+	"github.com/george012/fltk_go"
 )
 
 func main() {
@@ -167,4 +167,4 @@ func main() {
 
 ## 1.5. 资源
 - [官方 FLTK 1.4 文档](https://www.fltk.org/doc-1.4/index.html)
-- [go-fltk 文档](https://pkg.go.dev/github.com/pwiecz/go-fltk) 
+- [go-fltk 文档](https://pkg.go.dev/github.com/george012/fltk_go) 

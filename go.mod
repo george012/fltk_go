@@ -1,3 +1,3 @@
-module github.com/pwiecz/go-fltk
+module github.com/george012/fltk_go
 
-go 1.16
+go 1.18

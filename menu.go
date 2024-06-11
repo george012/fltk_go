@@ -164,7 +164,7 @@ func (m *MenuButton) SetType(menuType MenuType) {
 func (m *MenuButton) Popup() {
 	if m.Size() > 0 {
 		// Fltk may crash when Popup is called on empty menu.
-		// https://github.com/pwiecz/go-fltk/issues/64
+		// https://github.com/george012/fltk_go/issues/64
 		C.go_fltk_MenuButton_popup((*C.Fl_Menu_Button)(m.ptr()))
 	}
 }

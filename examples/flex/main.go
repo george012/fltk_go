@@ -3,7 +3,7 @@ package main
 import (
 	"strconv"
 
-	"github.com/pwiecz/go-fltk"
+	"github.com/george012/fltk_go"
 )
 
 var i = 0

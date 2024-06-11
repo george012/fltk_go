@@ -6,6 +6,7 @@ package fltk
 */
 import "C"
 import (
+	"github.com/george012/fltk_go/config"
 	"sync"
 	"unsafe"
 )
@@ -596,4 +597,8 @@ func Version() string {
 
 func GoVersion() string {
 	return "v0.1.0"
+}
+
+func VersionByGobind() string {
+	return config.ProjectVersion
 }
