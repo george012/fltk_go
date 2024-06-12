@@ -1,4 +1,4 @@
-package fltk
+package fltk_go
 
 import (
 	"errors"

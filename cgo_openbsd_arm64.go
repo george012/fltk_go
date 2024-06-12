@@ -1,6 +1,6 @@
 //go:build openbsd && arm64
 
-package fltk
+package fltk_go
 
 // #cgo openbsd,arm64 CXXFLAGS: -std=c++11
 // #cgo openbsd,arm64 CPPFLAGS: -I${SRCDIR}/lib/openbsd/arm64 -I/usr/X11R6/include -I${SRCDIR}/include -I${SRCDIR}/include/FL/images -I${SRCDIR}/include/png -I${SRCDIR}/include/zlib -I${SRCDIR}/include/jpeg -D_LARGEFILE_SOURCE -D_LARGEFILE64_SOURCE -D_FILE_OFFSET_BITS=64 -D_THREAD_SAFE -D_REENTRANT

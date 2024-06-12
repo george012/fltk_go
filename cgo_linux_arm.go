@@ -1,6 +1,6 @@
 //go:build linux && arm
 
-package fltk
+package fltk_go
 
 // #cgo linux,arm CXXFLAGS: -std=c++11
 // #cgo linux,arm CPPFLAGS: -I${SRCDIR}/lib/linux/arm -I${SRCDIR}/include -I${SRCDIR}/include/FL/images -I${SRCDIR}/include/png -I${SRCDIR}/include/zlib -I${SRCDIR}/include/jpeg -D_LARGEFILE_SOURCE -D_LARGEFILE64_SOURCE -D_FILE_OFFSET_BITS=64 -D_THREAD_SAFE -D_REENTRANT

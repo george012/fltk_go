@@ -1,6 +1,6 @@
 // go:build windows && amd64
 
-package fltk
+package fltk_go
 
 // #cgo windows,amd64 CXXFLAGS: -std=c++11
 // #cgo windows,amd64 CPPFLAGS: -I${SRCDIR}/lib/windows/amd64 -I${SRCDIR}/include -I${SRCDIR}/include/FL/images -D_LARGEFILE_SOURCE -D_LARGEFILE64_SOURCE -D_FILE_OFFSET_BITS=64
