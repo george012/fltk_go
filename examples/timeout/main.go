@@ -7,18 +7,18 @@ import (
 )
 
 func main() {
-	win := fltk.NewWindow(400, 300)
+	win := fltk_go.NewWindow(400, 300)
 
-	fltk.NewButton(2, 2, 60, 30, "Test").SetCallback(func() {
-		fltk.AddTimeout(2.0, timeoutCb)
+	fltk_go.NewButton(2, 2, 60, 30, "Test").SetCallback(func() {
+		fltk_go.AddTimeout(2.0, timeoutCb)
 	})
 
 	win.End()
 	win.Show()
-	fltk.Run()
+	fltk_go.Run()
 }
 
 func timeoutCb() {
 	fmt.Println("test")
-	fltk.RepeatTimeout(2.0, timeoutCb)
+	fltk_go.RepeatTimeout(2.0, timeoutCb)
 }

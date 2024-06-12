@@ -8,53 +8,53 @@ import (
 )
 
 type Panel struct {
-	win          *fltk.Window
-	undoBtn      *fltk.Button
-	redoBtn      *fltk.Button
-	drawBox      *fltk.Box
-	adjustDlg    *fltk.Window
-	adjustTips   *fltk.Box
-	adjustSlider *fltk.Slider
-	popMenu      *fltk.MenuButton
+	win          *fltk_go.Window
+	undoBtn      *fltk_go.Button
+	redoBtn      *fltk_go.Button
+	drawBox      *fltk_go.Box
+	adjustDlg    *fltk_go.Window
+	adjustTips   *fltk_go.Box
+	adjustSlider *fltk_go.Slider
+	popMenu      *fltk_go.MenuButton
 }
 
-func NewPanel(win *fltk.Window) *Panel {
+func NewPanel(win *fltk_go.Window) *Panel {
 	p := &Panel{}
 	p.win = win
 
-	col := fltk.NewFlex(WIDGET_PADDING, WIDGET_PADDING, win.W()-WIDGET_PADDING*2, win.H()-WIDGET_PADDING*2)
+	col := fltk_go.NewFlex(WIDGET_PADDING, WIDGET_PADDING, win.W()-WIDGET_PADDING*2, win.H()-WIDGET_PADDING*2)
 	col.SetGap(WIDGET_PADDING)
 
-	row := fltk.NewFlex(0, 0, 0, 0)
+	row := fltk_go.NewFlex(0, 0, 0, 0)
 	col.Fixed(row, WIDGET_HEIGHT)
-	row.SetType(fltk.ROW)
+	row.SetType(fltk_go.ROW)
 	row.SetGap(WIDGET_PADDING)
 
-	fltk.NewBox(fltk.NO_BOX, 0, 0, 0, 0) // invisible
+	fltk_go.NewBox(fltk_go.NO_BOX, 0, 0, 0, 0) // invisible
 
-	p.undoBtn = fltk.NewButton(0, 0, 0, 0)
+	p.undoBtn = fltk_go.NewButton(0, 0, 0, 0)
 	p.undoBtn.SetLabel("Undo")
 
-	p.redoBtn = fltk.NewButton(0, 0, 0, 0)
+	p.redoBtn = fltk_go.NewButton(0, 0, 0, 0)
 	p.redoBtn.SetLabel("Redo")
 
-	fltk.NewBox(fltk.NO_BOX, 0, 0, 0, 0) // invisible
+	fltk_go.NewBox(fltk_go.NO_BOX, 0, 0, 0, 0) // invisible
 
 	row.End()
 
-	p.drawBox = fltk.NewBox(fltk.NO_BOX, 0, 0, 0, 0)
+	p.drawBox = fltk_go.NewBox(fltk_go.NO_BOX, 0, 0, 0, 0)
 
 	col.End()
 	win.Resizable(col)
 
-	p.adjustDlg = fltk.NewWindow(WIDGET_WIDTH*2+WIDGET_PADDING*2, WIDGET_HEIGHT*2+WIDGET_PADDING*3)
+	p.adjustDlg = fltk_go.NewWindow(WIDGET_WIDTH*2+WIDGET_PADDING*2, WIDGET_HEIGHT*2+WIDGET_PADDING*3)
 	p.adjustDlg.SetModal()
 
-	row = fltk.NewFlex(WIDGET_PADDING, WIDGET_PADDING, WIDGET_WIDTH*2, WIDGET_HEIGHT*2)
-	p.adjustTips = fltk.NewBox(fltk.NO_BOX, 0, 0, 0, 0)
+	row = fltk_go.NewFlex(WIDGET_PADDING, WIDGET_PADDING, WIDGET_WIDTH*2, WIDGET_HEIGHT*2)
+	p.adjustTips = fltk_go.NewBox(fltk_go.NO_BOX, 0, 0, 0, 0)
 	p.adjustTips.SetLabel("Adjust diameter")
-	p.adjustSlider = fltk.NewSlider(0, 0, 0, 0)
-	p.adjustSlider.SetType(fltk.HOR_NICE_SLIDER)
+	p.adjustSlider = fltk_go.NewSlider(0, 0, 0, 0)
+	p.adjustSlider.SetType(fltk_go.HOR_NICE_SLIDER)
 	p.adjustSlider.SetMaximum(MAX_RADIUS)
 	p.adjustSlider.SetMinimum(MIN_RADIUS)
 	p.adjustSlider.SetValue(DEF_RADIUS)
@@ -68,8 +68,8 @@ func NewPanel(win *fltk.Window) *Panel {
 
 	p.adjustDlg.End()
 
-	p.popMenu = fltk.NewMenuButton(0, 0, 0, 0)
-	p.popMenu.SetType(fltk.POPUP2)
+	p.popMenu = fltk_go.NewMenuButton(0, 0, 0, 0)
+	p.popMenu.SetType(fltk_go.POPUP2)
 	p.popMenu.Add("Adjust diameter..", func() {
 		p.adjustDlg.Show()
 	})
@@ -91,7 +91,7 @@ func (p *Panel) Bind(ctx *Context) {
 	})
 
 	p.drawBox.SetDrawHandler(func(func()) {
-		fltk.DrawRectfWithColor(p.drawBox.X(), p.drawBox.Y(), p.drawBox.W(), p.drawBox.H(), fltk.WHITE)
+		fltk_go.DrawRectfWithColor(p.drawBox.X(), p.drawBox.Y(), p.drawBox.W(), p.drawBox.H(), fltk_go.WHITE)
 
 		for _, c := range ctx.Circles() {
 			x := c.X + p.drawBox.X() - c.R
@@ -100,27 +100,27 @@ func (p *Panel) Bind(ctx *Context) {
 			h := c.R * 2
 
 			if ctx.IsCirclePicked(c) {
-				fltk.SetDrawColor(fltk.ColorFromRgb(128, 128, 128))
-				fltk.DrawPie(x, y, w, h, 0, 360)
+				fltk_go.SetDrawColor(fltk_go.ColorFromRgb(128, 128, 128))
+				fltk_go.DrawPie(x, y, w, h, 0, 360)
 			} else {
-				fltk.SetDrawColor(fltk.ColorFromRgb(0, 0, 0))
-				fltk.DrawArc(x, y, w, h, 0, 360)
+				fltk_go.SetDrawColor(fltk_go.ColorFromRgb(0, 0, 0))
+				fltk_go.DrawArc(x, y, w, h, 0, 360)
 			}
 		}
 	})
 
-	p.drawBox.SetEventHandler(func(e fltk.Event) bool {
-		if fltk.EventIsClick() && e == fltk.RELEASE {
-			x := (fltk.EventX() - p.drawBox.X())
-			y := (fltk.EventY() - p.drawBox.Y())
-			switch fltk.EventButton() {
-			case fltk.LeftMouse:
+	p.drawBox.SetEventHandler(func(e fltk_go.Event) bool {
+		if fltk_go.EventIsClick() && e == fltk_go.RELEASE {
+			x := (fltk_go.EventX() - p.drawBox.X())
+			y := (fltk_go.EventY() - p.drawBox.Y())
+			switch fltk_go.EventButton() {
+			case fltk_go.LeftMouse:
 				c := ctx.NewCircle(x, y)
 				ctx.AddCircle(c)
 				ctx.AddOp(OP_ADD, c)
 				p.Update(ctx)
 				return true
-			case fltk.RightMouse:
+			case fltk_go.RightMouse:
 				c := ctx.PickCircle(x, y)
 				if c == nil {
 					return true
@@ -129,24 +129,24 @@ func (p *Panel) Bind(ctx *Context) {
 
 				p.adjustTips.SetLabel(fmt.Sprintf("Adjust the circle at (%d, %d)", c.X, c.Y))
 				p.adjustSlider.SetValue(float64(c.R))
-				p.adjustDlg.SetPosition(fltk.EventXRoot()-c.R, fltk.EventYRoot()-c.R-p.adjustDlg.H()-WIDGET_PADDING)
+				p.adjustDlg.SetPosition(fltk_go.EventXRoot()-c.R, fltk_go.EventYRoot()-c.R-p.adjustDlg.H()-WIDGET_PADDING)
 				p.popMenu.Popup()
 			}
 		}
 		return false
 	})
 
-	p.adjustDlg.SetEventHandler(func(e fltk.Event) bool {
+	p.adjustDlg.SetEventHandler(func(e fltk_go.Event) bool {
 		c := ctx.PickedCircle()
 		if c == nil {
 			return false
 		}
 		switch e {
-		case fltk.SHOW:
+		case fltk_go.SHOW:
 			ctx.UpdateCircle(c)
 			ctx.AddOp(OP_UPDATE, c)
 			return true
-		case fltk.HIDE:
+		case fltk_go.HIDE:
 			c.R = int(p.adjustSlider.Value())
 			ctx.AddOp(OP_UPDATE, c)
 			ctx.UnPickCircle()
@@ -156,7 +156,7 @@ func (p *Panel) Bind(ctx *Context) {
 		return false
 	})
 
-	p.adjustSlider.SetCallbackCondition(fltk.WhenChanged)
+	p.adjustSlider.SetCallbackCondition(fltk_go.WhenChanged)
 	p.adjustSlider.SetCallback(func() {
 		c := ctx.PickedCircle()
 		if c == nil {

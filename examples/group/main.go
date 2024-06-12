@@ -8,9 +8,9 @@ import (
 )
 
 func main() {
-	win := fltk.NewWindow(300, 200)
-	group := fltk.NewGroup(5, 20, 285, 170, "Group")
-	fltk.NewButton(10, 10, 50, 20, "Button")
+	win := fltk_go.NewWindow(300, 200)
+	group := fltk_go.NewGroup(5, 20, 285, 170, "Group")
+	fltk_go.NewButton(10, 10, 50, 20, "Button")
 	group.End()
 	{
 		button := group.Child(0)
@@ -23,5 +23,5 @@ func main() {
 	}
 	win.End()
 	win.Show()
-	fltk.Run()
+	fltk_go.Run()
 }

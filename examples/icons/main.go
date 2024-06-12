@@ -33,21 +33,21 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
-	win := fltk.NewWindow(300, 200)
-	rgbIcon8, err := fltk.NewRgbImageFromImage(icon8)
+	win := fltk_go.NewWindow(300, 200)
+	rgbIcon8, err := fltk_go.NewRgbImageFromImage(icon8)
 	if err != nil {
 		panic(err)
 	}
-	rgbIcon16, err := fltk.NewRgbImageFromImage(icon16)
+	rgbIcon16, err := fltk_go.NewRgbImageFromImage(icon16)
 	if err != nil {
 		panic(err)
 	}
-	rgbIcon32, err := fltk.NewRgbImageFromImage(icon32)
+	rgbIcon32, err := fltk_go.NewRgbImageFromImage(icon32)
 	if err != nil {
 		panic(err)
 	}
-	win.SetIcons([]*fltk.RgbImage{rgbIcon8, rgbIcon16, rgbIcon32})
+	win.SetIcons([]*fltk_go.RgbImage{rgbIcon8, rgbIcon16, rgbIcon32})
 	win.End()
 	win.Show()
-	fltk.Run()
+	fltk_go.Run()
 }

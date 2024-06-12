@@ -15,13 +15,13 @@ const (
 func main() {
 	window := makeWindow()
 	window.Show()
-	fltk.Run()
+	fltk_go.Run()
 }
 
-func makeWindow() *fltk.Window {
+func makeWindow() *fltk_go.Window {
 	width := 200
 	height := 115
-	window := fltk.NewWindow(width, height)
+	window := fltk_go.NewWindow(width, height)
 	window.SetLabel("UI Config")
 	makeWidgets(width, height)
 	window.End()
@@ -29,7 +29,7 @@ func makeWindow() *fltk.Window {
 }
 
 func makeWidgets(width, height int) {
-	colFlex := fltk.NewFlex(0, 0, width, height)
+	colFlex := fltk_go.NewFlex(0, 0, width, height)
 	colFlex.SetSpacing(pad)
 	rowFlex := makeScaleRow(width, rowHeight)
 	colFlex.Fixed(rowFlex, rowHeight)
@@ -40,9 +40,9 @@ func makeWidgets(width, height int) {
 	colFlex.End()
 }
 
-func makeScaleRow(width, height int) *fltk.Flex {
-	rowFlex := fltk.NewFlex(0, 0, width, height)
-	rowFlex.SetType(fltk.ROW)
+func makeScaleRow(width, height int) *fltk_go.Flex {
+	rowFlex := fltk_go.NewFlex(0, 0, width, height)
+	rowFlex.SetType(fltk_go.ROW)
 	rowFlex.SetSpacing(pad)
 	scaleLabel := makeAccelLabel(colWidth, rowHeight, "&Scale")
 	scaleSpinner := makeScaleSpinner()
@@ -53,23 +53,23 @@ func makeScaleRow(width, height int) *fltk.Flex {
 	return rowFlex
 }
 
-func makeScaleSpinner() *fltk.Spinner {
-	spinner := fltk.NewSpinner(0, 0, colWidth, rowHeight)
+func makeScaleSpinner() *fltk_go.Spinner {
+	spinner := fltk_go.NewSpinner(0, 0, colWidth, rowHeight)
 	spinner.SetTooltip("Sets the application's scale.")
-	spinner.SetType(fltk.SPINNER_FLOAT_INPUT)
+	spinner.SetType(fltk_go.SPINNER_FLOAT_INPUT)
 	spinner.SetMinimum(0.5)
 	spinner.SetMaximum(3.5)
 	spinner.SetStep(0.1)
-	spinner.SetValue(float64(fltk.ScreenScale(0)))
+	spinner.SetValue(float64(fltk_go.ScreenScale(0)))
 	spinner.SetCallback(func() {
-		fltk.SetScreenScale(0, float32(spinner.Value()))
+		fltk_go.SetScreenScale(0, float32(spinner.Value()))
 	})
 	return spinner
 }
 
-func makeThemeRow(width, height int) *fltk.Flex {
-	rowFlex := fltk.NewFlex(0, 0, width, height)
-	rowFlex.SetType(fltk.ROW)
+func makeThemeRow(width, height int) *fltk_go.Flex {
+	rowFlex := fltk_go.NewFlex(0, 0, width, height)
+	rowFlex.SetType(fltk_go.ROW)
 	rowFlex.SetSpacing(pad)
 	themeLabel := makeAccelLabel(colWidth, rowHeight, "&Theme")
 	themeChoice := makeThemeChoice()
@@ -79,34 +79,34 @@ func makeThemeRow(width, height int) *fltk.Flex {
 	return rowFlex
 }
 
-func makeThemeChoice() *fltk.Choice {
-	choice := fltk.NewChoice(0, 0, colWidth, rowHeight)
+func makeThemeChoice() *fltk_go.Choice {
+	choice := fltk_go.NewChoice(0, 0, colWidth, rowHeight)
 	choice.SetTooltip("Sets the application's theme.")
 	for i, name := range []string{"&Base", "&Gleam", "G&tk", "&Oxy", "&Plastic"} {
 		theme := strings.ReplaceAll(name, "&", "")
 		if theme == "Oxy" {
 			choice.SetValue(i)
-			fltk.SetScheme(theme)
+			fltk_go.SetScheme(theme)
 		}
-		choice.Add(name, func() { fltk.SetScheme(theme) })
+		choice.Add(name, func() { fltk_go.SetScheme(theme) })
 	}
 	return choice
 }
 
-func makeTooltipRow(width, height int) *fltk.Flex {
-	rowFlex := fltk.NewFlex(0, 0, width, height)
-	rowFlex.SetType(fltk.ROW)
+func makeTooltipRow(width, height int) *fltk_go.Flex {
+	rowFlex := fltk_go.NewFlex(0, 0, width, height)
+	rowFlex.SetType(fltk_go.ROW)
 	rowFlex.SetSpacing(pad)
-	padBox := fltk.NewBox(fltk.NO_BOX, 0, 0, colWidth, rowHeight)
-	checkButton := fltk.NewCheckButton(colWidth, 0, colWidth, rowHeight,
+	padBox := fltk_go.NewBox(fltk_go.NO_BOX, 0, 0, colWidth, rowHeight)
+	checkButton := fltk_go.NewCheckButton(colWidth, 0, colWidth, rowHeight,
 		"S&how Tooltips")
 	checkButton.SetTooltip("If checked the application shows tooltips.")
-	checkButton.SetValue(fltk.AreTooltipsEnabled())
+	checkButton.SetValue(fltk_go.AreTooltipsEnabled())
 	checkButton.SetCallback(func() {
 		if checkButton.Value() {
-			fltk.EnableTooltips()
+			fltk_go.EnableTooltips()
 		} else {
-			fltk.DisableTooltips()
+			fltk_go.DisableTooltips()
 		}
 	})
 	rowFlex.Fixed(padBox, colWidth)
@@ -114,10 +114,10 @@ func makeTooltipRow(width, height int) *fltk.Flex {
 	return rowFlex
 }
 
-func makeAccelLabel(width, height int, label string) *fltk.Button {
-	button := fltk.NewButton(0, 0, width, height, label)
-	button.SetAlign(fltk.ALIGN_INSIDE | fltk.ALIGN_LEFT)
-	button.SetBox(fltk.NO_BOX)
+func makeAccelLabel(width, height int, label string) *fltk_go.Button {
+	button := fltk_go.NewButton(0, 0, width, height, label)
+	button.SetAlign(fltk_go.ALIGN_INSIDE | fltk_go.ALIGN_LEFT)
+	button.SetBox(fltk_go.NO_BOX)
 	button.ClearVisibleFocus()
 	return button
 }

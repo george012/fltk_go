@@ -9,14 +9,14 @@ import (
 var i = 0
 
 func main() {
-	win := fltk.NewWindow(300, 200)
-	column := fltk.NewFlex(0, 0, 300, 200)
-	column.SetType(fltk.COLUMN)
+	win := fltk_go.NewWindow(300, 200)
+	column := fltk_go.NewFlex(0, 0, 300, 200)
+	column.SetType(fltk_go.COLUMN)
 	column.SetGap(5)
-	inc := fltk.NewButton(0, 0, 0, 0, "Increment")
+	inc := fltk_go.NewButton(0, 0, 0, 0, "Increment")
 	column.Fixed(inc, 40)
-	box := fltk.NewBox(fltk.FLAT_BOX, 0, 0, 0, 0, "0")
-	dec := fltk.NewButton(0, 0, 0, 0, "Decrement")
+	box := fltk_go.NewBox(fltk_go.FLAT_BOX, 0, 0, 0, 0, "0")
+	dec := fltk_go.NewButton(0, 0, 0, 0, "Decrement")
 	inc.SetCallback(func() {
 		i++
 		box.SetLabel(strconv.Itoa(i))
@@ -31,5 +31,5 @@ func main() {
 	win.End()
 	win.Resizable(column)
 	win.Show()
-	fltk.Run()
+	fltk_go.Run()
 }

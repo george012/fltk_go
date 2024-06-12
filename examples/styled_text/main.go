@@ -7,26 +7,26 @@ import (
 )
 
 func main() {
-	fltk.SetScheme("oxy")
+	fltk_go.SetScheme("oxy")
 
-	entries := []fltk.StyleTableEntry{
-		fltk.StyleTableEntry{
-			Color: fltk.RED,
-			Font:  fltk.HELVETICA,
+	entries := []fltk_go.StyleTableEntry{
+		fltk_go.StyleTableEntry{
+			Color: fltk_go.RED,
+			Font:  fltk_go.HELVETICA,
 			Size:  14,
 		},
-		fltk.StyleTableEntry{
-			Color: fltk.BLUE,
-			Font:  fltk.HELVETICA,
+		fltk_go.StyleTableEntry{
+			Color: fltk_go.BLUE,
+			Font:  fltk_go.HELVETICA,
 			Size:  14,
 		},
 	}
 
-	buf := fltk.NewTextBuffer()
-	sbuf := fltk.NewTextBuffer()
+	buf := fltk_go.NewTextBuffer()
+	sbuf := fltk_go.NewTextBuffer()
 
-	window := fltk.NewWindow(600, 400)
-	disp := fltk.NewTextDisplay(0, 0, 600, 400)
+	window := fltk_go.NewWindow(600, 400)
+	disp := fltk_go.NewTextDisplay(0, 0, 600, 400)
 	disp.SetBuffer(buf)
 	disp.SetHighlightData(sbuf, entries)
 	window.End()
@@ -37,5 +37,5 @@ func main() {
 	buf.Append("World\n")
 	sbuf.Append(strings.Repeat("B", len("World\n")))
 
-	fltk.Run()
+	fltk_go.Run()
 }

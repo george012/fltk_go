@@ -19,50 +19,50 @@ const (
 )
 
 func main() {
-	fltk.SetScheme("gtk+")
-	fltk.Lock() // enable the FLTK lock mechanism
+	fltk_go.SetScheme("gtk+")
+	fltk_go.Lock() // enable the FLTK lock mechanism
 
 	startTime := time.Now()
 
-	win := fltk.NewWindow(
+	win := fltk_go.NewWindow(
 		WIDGET_LABEL_WIDTH+WIDGET_WIDTH+WIDGET_PADDING*2,
 		WIDGET_HEIGHT*4+WIDGET_PADDING*5)
 	win.SetLabel("Timer")
 
-	col := fltk.NewFlex(WIDGET_PADDING, WIDGET_PADDING, win.W()-WIDGET_PADDING*2, win.H()-WIDGET_PADDING*2)
+	col := fltk_go.NewFlex(WIDGET_PADDING, WIDGET_PADDING, win.W()-WIDGET_PADDING*2, win.H()-WIDGET_PADDING*2)
 	col.SetGap(WIDGET_PADDING)
 
-	row := fltk.NewFlex(0, 0, 0, 0)
-	row.SetType(fltk.ROW)
-	label := fltk.NewBox(fltk.NO_BOX, 0, 0, 0, 0, "Elapsed Time:")
-	label.SetAlign(fltk.ALIGN_INSIDE | fltk.ALIGN_LEFT)
+	row := fltk_go.NewFlex(0, 0, 0, 0)
+	row.SetType(fltk_go.ROW)
+	label := fltk_go.NewBox(fltk_go.NO_BOX, 0, 0, 0, 0, "Elapsed Time:")
+	label.SetAlign(fltk_go.ALIGN_INSIDE | fltk_go.ALIGN_LEFT)
 	row.Fixed(label, WIDGET_LABEL_WIDTH)
-	elapsedProgess := fltk.NewProgress(0, 0, 0, 0)
-	elapsedProgess.SetSelectionColor(fltk.BLUE)
+	elapsedProgess := fltk_go.NewProgress(0, 0, 0, 0)
+	elapsedProgess.SetSelectionColor(fltk_go.BLUE)
 	elapsedProgess.SetMaximum(DURATION_DEFAULT)
 	row.End()
 
-	elapsedLabel := fltk.NewBox(fltk.NO_BOX, 0, 0, 0, 0)
+	elapsedLabel := fltk_go.NewBox(fltk_go.NO_BOX, 0, 0, 0, 0)
 	elapsedLabel.SetLabel("0.0s")
-	elapsedLabel.SetAlign(fltk.ALIGN_INSIDE | fltk.ALIGN_LEFT)
+	elapsedLabel.SetAlign(fltk_go.ALIGN_INSIDE | fltk_go.ALIGN_LEFT)
 
-	row = fltk.NewFlex(0, 0, 0, 0)
-	row.SetType(fltk.ROW)
-	label = fltk.NewBox(fltk.NO_BOX, 0, 0, 0, 0, "Duration:")
-	label.SetAlign(fltk.ALIGN_INSIDE | fltk.ALIGN_LEFT)
+	row = fltk_go.NewFlex(0, 0, 0, 0)
+	row.SetType(fltk_go.ROW)
+	label = fltk_go.NewBox(fltk_go.NO_BOX, 0, 0, 0, 0, "Duration:")
+	label.SetAlign(fltk_go.ALIGN_INSIDE | fltk_go.ALIGN_LEFT)
 	row.Fixed(label, WIDGET_LABEL_WIDTH)
-	durationSlider := fltk.NewSlider(0, 0, 0, 0)
-	durationSlider.SetType(fltk.HOR_SLIDER)
+	durationSlider := fltk_go.NewSlider(0, 0, 0, 0)
+	durationSlider.SetType(fltk_go.HOR_SLIDER)
 	durationSlider.SetValue(DURATION_DEFAULT)
 	durationSlider.SetMaximum(DURATION_MAXIMUM)
-	// durationSlider.SetCallbackCondition(fltk.WhenChanged)
+	// durationSlider.SetCallbackCondition(fltk_go.WhenChanged)
 	durationSlider.SetCallback(func() {
 		// log.Printf("change duration: %f", durationSlider.Value())
 		elapsedProgess.SetMaximum(durationSlider.Value())
 	})
 	row.End()
 
-	resetBtn := fltk.NewButton(0, 0, 0, 0)
+	resetBtn := fltk_go.NewButton(0, 0, 0, 0)
 	resetBtn.SetLabel("Reset")
 	resetBtn.SetCallback(func() {
 		startTime = time.Now()
@@ -78,7 +78,7 @@ func main() {
 			case <-stopCh:
 				return
 			case t := <-ticker.C:
-				fltk.Awake(func() {
+				fltk_go.Awake(func() {
 					if durationSlider.Value()-elapsedProgess.Value() >= 0 {
 						d := t.Sub(startTime)
 						elapsedProgess.SetValue(d.Seconds())
@@ -92,7 +92,7 @@ func main() {
 	col.End()
 	win.End()
 	win.Show()
-	fltk.Run()
+	fltk_go.Run()
 
 	close(stopCh)
 }

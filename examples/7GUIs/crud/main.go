@@ -23,9 +23,9 @@ func init() {
 }
 
 func main() {
-	fltk.SetScheme("gtk+")
+	fltk_go.SetScheme("gtk+")
 
-	win := fltk.NewWindow(
+	win := fltk_go.NewWindow(
 		WIDGET_WIDTH*4+WIDGET_PADDING*3,
 		WIDGET_HEIGHT*6+WIDGET_PADDING*4)
 	win.SetLabel("CURD")
@@ -35,59 +35,59 @@ func main() {
 
 	win.End()
 	win.Show()
-	fltk.Run()
+	fltk_go.Run()
 }
 
 type CrudPanel struct {
-	prefixInput  *fltk.Input
-	listBrowser  *fltk.HoldBrowser
-	nameInput    *fltk.Input
-	surnameInput *fltk.Input
-	createBtn    *fltk.Button
-	updateBtn    *fltk.Button
-	deleteBtn    *fltk.Button
+	prefixInput  *fltk_go.Input
+	listBrowser  *fltk_go.HoldBrowser
+	nameInput    *fltk_go.Input
+	surnameInput *fltk_go.Input
+	createBtn    *fltk_go.Button
+	updateBtn    *fltk_go.Button
+	deleteBtn    *fltk_go.Button
 }
 
-func NewCrudPanel(win *fltk.Window) *CrudPanel {
+func NewCrudPanel(win *fltk_go.Window) *CrudPanel {
 	p := &CrudPanel{}
 
 	win.Begin()
 
-	col := fltk.NewFlex(WIDGET_PADDING, WIDGET_PADDING, win.W()-WIDGET_PADDING*2, win.H()-WIDGET_PADDING*2)
+	col := fltk_go.NewFlex(WIDGET_PADDING, WIDGET_PADDING, win.W()-WIDGET_PADDING*2, win.H()-WIDGET_PADDING*2)
 	col.SetGap(WIDGET_PADDING)
 
 	{
-		row := fltk.NewFlex(0, 0, 0, 0)
+		row := fltk_go.NewFlex(0, 0, 0, 0)
 		col.Fixed(row, WIDGET_HEIGHT)
-		row.SetType(fltk.ROW)
-		fltk.NewBox(fltk.NO_BOX, 0, 0, 0, 0, "Filter prefix:").SetAlign(fltk.ALIGN_INSIDE | fltk.ALIGN_LEFT)
-		p.prefixInput = fltk.NewInput(0, 0, 0, 0)
-		fltk.NewBox(fltk.NO_BOX, 0, 0, 0, 0) // invisible
-		fltk.NewBox(fltk.NO_BOX, 0, 0, 0, 0) // invisible
+		row.SetType(fltk_go.ROW)
+		fltk_go.NewBox(fltk_go.NO_BOX, 0, 0, 0, 0, "Filter prefix:").SetAlign(fltk_go.ALIGN_INSIDE | fltk_go.ALIGN_LEFT)
+		p.prefixInput = fltk_go.NewInput(0, 0, 0, 0)
+		fltk_go.NewBox(fltk_go.NO_BOX, 0, 0, 0, 0) // invisible
+		fltk_go.NewBox(fltk_go.NO_BOX, 0, 0, 0, 0) // invisible
 		row.End()
 	}
 
 	{
-		row := fltk.NewFlex(0, 0, 0, 0*4)
-		row.SetType(fltk.ROW)
+		row := fltk_go.NewFlex(0, 0, 0, 0*4)
+		row.SetType(fltk_go.ROW)
 		row.SetGap(WIDGET_PADDING)
-		p.listBrowser = fltk.NewHoldBrowser(0, 0, 0, 0)
+		p.listBrowser = fltk_go.NewHoldBrowser(0, 0, 0, 0)
 		{
-			col := fltk.NewFlex(0, 0, 0, 0)
+			col := fltk_go.NewFlex(0, 0, 0, 0)
 			{
-				row := fltk.NewFlex(0, 0, 0, 0)
+				row := fltk_go.NewFlex(0, 0, 0, 0)
 				col.Fixed(row, WIDGET_HEIGHT)
-				row.SetType(fltk.ROW)
-				fltk.NewBox(fltk.NO_BOX, 0, 0, 0, 0, "Name:").SetAlign(fltk.ALIGN_INSIDE | fltk.ALIGN_LEFT)
-				p.nameInput = fltk.NewInput(0, 0, 0, 0)
+				row.SetType(fltk_go.ROW)
+				fltk_go.NewBox(fltk_go.NO_BOX, 0, 0, 0, 0, "Name:").SetAlign(fltk_go.ALIGN_INSIDE | fltk_go.ALIGN_LEFT)
+				p.nameInput = fltk_go.NewInput(0, 0, 0, 0)
 				row.End()
 			}
 			{
-				row := fltk.NewFlex(0, 0, 0, 0)
+				row := fltk_go.NewFlex(0, 0, 0, 0)
 				col.Fixed(row, WIDGET_HEIGHT)
-				row.SetType(fltk.ROW)
-				fltk.NewBox(fltk.NO_BOX, 0, 0, 0, 0, "Surname:").SetAlign(fltk.ALIGN_INSIDE | fltk.ALIGN_LEFT)
-				p.surnameInput = fltk.NewInput(0, 0, 0, 0)
+				row.SetType(fltk_go.ROW)
+				fltk_go.NewBox(fltk_go.NO_BOX, 0, 0, 0, 0, "Surname:").SetAlign(fltk_go.ALIGN_INSIDE | fltk_go.ALIGN_LEFT)
+				p.surnameInput = fltk_go.NewInput(0, 0, 0, 0)
 				row.End()
 			}
 			col.End()
@@ -97,19 +97,19 @@ func NewCrudPanel(win *fltk.Window) *CrudPanel {
 	}
 
 	{
-		row := fltk.NewFlex(0, 0, 0, 0)
+		row := fltk_go.NewFlex(0, 0, 0, 0)
 		col.Fixed(row, WIDGET_HEIGHT)
-		row.SetType(fltk.ROW)
+		row.SetType(fltk_go.ROW)
 		row.SetGap(WIDGET_PADDING)
-		p.createBtn = fltk.NewButton(0, 0, 0, 0)
+		p.createBtn = fltk_go.NewButton(0, 0, 0, 0)
 		p.createBtn.SetLabel("Create")
 
-		p.updateBtn = fltk.NewButton(0, 0, 0, 0)
+		p.updateBtn = fltk_go.NewButton(0, 0, 0, 0)
 		p.updateBtn.SetLabel("Update")
 
-		p.deleteBtn = fltk.NewButton(0, 0, 0, 0)
+		p.deleteBtn = fltk_go.NewButton(0, 0, 0, 0)
 		p.deleteBtn.SetLabel("Delete")
-		fltk.NewBox(fltk.NO_BOX, 0, 0, 0, 0) // invisible
+		fltk_go.NewBox(fltk_go.NO_BOX, 0, 0, 0, 0) // invisible
 		row.End()
 	}
 
@@ -119,7 +119,7 @@ func NewCrudPanel(win *fltk.Window) *CrudPanel {
 }
 
 func (p *CrudPanel) Bind(db *DataBase) {
-	p.prefixInput.SetCallbackCondition(fltk.WhenChanged)
+	p.prefixInput.SetCallbackCondition(fltk_go.WhenChanged)
 	p.prefixInput.SetCallback(func() {
 		p.ReflushList(db)
 	})
@@ -147,7 +147,7 @@ func (p *CrudPanel) Bind(db *DataBase) {
 		}
 	})
 
-	p.listBrowser.SetCallbackCondition(fltk.WhenChanged)
+	p.listBrowser.SetCallbackCondition(fltk_go.WhenChanged)
 	p.listBrowser.SetCallback(func() {
 		p.Update(db)
 	})

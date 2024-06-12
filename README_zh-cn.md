@@ -45,7 +45,7 @@
     - OpenGL
 
 ## 1.2. 使用
-* 可以使用 `fltk.New<WidgetType>` 函数创建小部件，并对你正在实例化的小部件进行修改。
+* 可以使用 `fltk_go.New<WidgetType>` 函数创建小部件，并对你正在实例化的小部件进行修改。
 函数和方法名与原始 C++ 名称相似，但遵循 Go 语言的 PascalCase 命名习惯。
 设置器方法前缀为 `Set`。
 
@@ -55,15 +55,15 @@ package main
 import "github.com/george012/fltk_go"
 
 func main() {
-    win := fltk.NewWindow(400, 300)
+    win := fltk_go.NewWindow(400, 300)
     win.SetLabel("Main Window")
-    btn := fltk.NewButton(160, 200, 80, 30, "Click")
+    btn := fltk_go.NewButton(160, 200, 80, 30, "Click")
     btn.SetCallback(func() {
         btn.SetLabel("Clicked")
     })
     win.End()
     win.Show()
-    fltk.Run()
+    fltk_go.Run()
 }
 ```
 
@@ -74,7 +74,7 @@ FLTK 提供了 4 种内置样式：
 - gtk+
 - gleam
 - plastic
-例如：可以使用 `fltk.SetScheme("gtk+")` 来设置这些样式.
+例如：可以使用 `fltk_go.SetScheme("gtk+")` 来设置这些样式.
 
 FLTK 还允许自定义小部件的样式：
 ```go

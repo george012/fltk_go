@@ -13,9 +13,9 @@ const (
 var ctx = NewContext()
 
 func main() {
-	fltk.SetScheme("gtk+")
+	fltk_go.SetScheme("gtk+")
 
-	win := fltk.NewWindow(
+	win := fltk_go.NewWindow(
 		WIDGET_WIDTH*4+WIDGET_PADDING*3,
 		WIDGET_HEIGHT*14+WIDGET_PADDING*3)
 	win.SetLabel("Circle Drawer")
@@ -25,5 +25,5 @@ func main() {
 
 	win.End()
 	win.Show()
-	fltk.Run()
+	fltk_go.Run()
 }

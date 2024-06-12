@@ -27,10 +27,10 @@ const (
 func main() {
 	var (
 		option       BookOption
-		optionChoice *fltk.Choice
-		startInput   *fltk.Input
-		returnInput  *fltk.Input
-		bookBtn      *fltk.Button
+		optionChoice *fltk_go.Choice
+		startInput   *fltk_go.Input
+		returnInput  *fltk_go.Input
+		bookBtn      *fltk_go.Button
 	)
 
 	update := func() {
@@ -55,44 +55,44 @@ func main() {
 		}
 	}
 
-	fltk.SetScheme("gtk+")
+	fltk_go.SetScheme("gtk+")
 
-	win := fltk.NewWindow(
+	win := fltk_go.NewWindow(
 		WIDGET_WIDTH+WIDGET_PADDING*2,
 		WIDGET_HEIGHT*4+WIDGET_PADDING*2)
 	win.SetLabel("Book Flight")
 
-	col := fltk.NewFlex(WIDGET_PADDING, WIDGET_PADDING, WIDGET_WIDTH, WIDGET_HEIGHT*4)
-	col.SetType(fltk.COLUMN)
+	col := fltk_go.NewFlex(WIDGET_PADDING, WIDGET_PADDING, WIDGET_WIDTH, WIDGET_HEIGHT*4)
+	col.SetType(fltk_go.COLUMN)
 	col.SetGap(WIDGET_PADDING)
 
 	option = BookOptionOneWay
 
-	optionChoice = fltk.NewChoice(0, 0, 0, 0)
+	optionChoice = fltk_go.NewChoice(0, 0, 0, 0)
 	optionChoice.Add("one-way flight", update)
 	optionChoice.Add("return flight", update)
 	optionChoice.SetValue(int(option))
 
 	now := time.Now()
-	startInput = fltk.NewInput(0, 0, 0, 0)
+	startInput = fltk_go.NewInput(0, 0, 0, 0)
 	startInput.SetValue(now.Format(DATE_FORMAT))
-	startInput.SetCallbackCondition(fltk.WhenChanged)
+	startInput.SetCallbackCondition(fltk_go.WhenChanged)
 	startInput.SetCallback(update)
 
-	returnInput = fltk.NewInput(0, 0, 0, 0)
+	returnInput = fltk_go.NewInput(0, 0, 0, 0)
 	returnInput.SetValue(now.Format(DATE_FORMAT))
-	returnInput.SetCallbackCondition(fltk.WhenChanged)
+	returnInput.SetCallbackCondition(fltk_go.WhenChanged)
 	returnInput.SetCallback(update)
 	// defaultInputColor = startInput.Color()
 
-	bookBtn = fltk.NewButton(0, 0, 0, 0)
+	bookBtn = fltk_go.NewButton(0, 0, 0, 0)
 	bookBtn.SetLabel("Book")
 	bookBtn.SetCallback(func() {
 		switch option {
 		case BookOptionOneWay:
-			fltk.MessageBox("Book successful", fmt.Sprintf("You have booked a one-way flight on %s.", startInput.Value()))
+			fltk_go.MessageBox("Book successful", fmt.Sprintf("You have booked a one-way flight on %s.", startInput.Value()))
 		case BookOptionReturn:
-			fltk.MessageBox("Book successful", fmt.Sprintf("You have booked a return flight on %s and %s.", startInput.Value(), returnInput.Value()))
+			fltk_go.MessageBox("Book successful", fmt.Sprintf("You have booked a return flight on %s and %s.", startInput.Value(), returnInput.Value()))
 		}
 	})
 
@@ -101,18 +101,18 @@ func main() {
 	col.End()
 	win.End()
 	win.Show()
-	fltk.Run()
+	fltk_go.Run()
 }
 
-func validateInput(input *fltk.Input) (time.Time, bool) {
+func validateInput(input *fltk_go.Input) (time.Time, bool) {
 	defer input.Redraw()
 
 	t, err := time.Parse(DATE_FORMAT, input.Value())
 	if err != nil {
-		input.SetColor(fltk.RED)
+		input.SetColor(fltk_go.RED)
 		return t, false
 	}
 
-	input.SetColor(fltk.BACKGROUND2_COLOR)
+	input.SetColor(fltk_go.BACKGROUND2_COLOR)
 	return t, true
 }

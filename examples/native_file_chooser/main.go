@@ -8,13 +8,13 @@ import (
 
 func main() {
 
-	win := fltk.NewWindow(300, 200)
-	button := fltk.NewButton(5, 5, 180, 20, "Show file chooser")
+	win := fltk_go.NewWindow(300, 200)
+	button := fltk_go.NewButton(5, 5, 180, 20, "Show file chooser")
 	button.SetCallback(func() {
-		nfc := fltk.NewNativeFileChooser()
+		nfc := fltk_go.NewNativeFileChooser()
 		defer nfc.Destroy()
-		nfc.SetOptions(fltk.NativeFileChooser_PREVIEW | fltk.NativeFileChooser_NEW_FOLDER)
-		nfc.SetType(fltk.NativeFileChooser_BROWSE_MULTI_FILE)
+		nfc.SetOptions(fltk_go.NativeFileChooser_PREVIEW | fltk_go.NativeFileChooser_NEW_FOLDER)
+		nfc.SetType(fltk_go.NativeFileChooser_BROWSE_MULTI_FILE)
 		nfc.SetDirectory("/home")
 		nfc.SetFilter("C++ Files\t*.{cxx,H}\nTxt Files\t*.txt")
 		nfc.SetTitle("Native file chooser example")
@@ -26,5 +26,5 @@ func main() {
 	})
 	win.End()
 	win.Show()
-	fltk.Run()
+	fltk_go.Run()
 }

@@ -7,19 +7,19 @@ import (
 )
 
 type Panel struct {
-	tb         *fltk.TableRow
+	tb         *fltk_go.TableRow
 	cellValues map[CellLoc]string
 
-	editInput *fltk.Input // the input box to show on editing cell
-	editCell  *Cell       // current editing cell meta, nil means not editing
+	editInput *fltk_go.Input // the input box to show on editing cell
+	editCell  *Cell          // current editing cell meta, nil means not editing
 }
 
-func NewPanel(win *fltk.Window, rowCount, colCount int) *Panel {
+func NewPanel(win *fltk_go.Window, rowCount, colCount int) *Panel {
 	p := &Panel{}
 
 	p.cellValues = make(map[CellLoc]string)
 
-	p.tb = fltk.NewTableRow(0, 0, win.W(), win.H())
+	p.tb = fltk_go.NewTableRow(0, 0, win.W(), win.H())
 	p.tb.SetRowCount(rowCount)
 	p.tb.SetColumnCount(colCount)
 	p.tb.EnableColumnHeaders()
@@ -29,9 +29,9 @@ func NewPanel(win *fltk.Window, rowCount, colCount int) *Panel {
 
 	p.tb.Begin()
 
-	p.editInput = fltk.NewInput(0, 0, 0, 0)
+	p.editInput = fltk_go.NewInput(0, 0, 0, 0)
 	p.editInput.Hide()
-	p.editInput.SetColor(fltk.YELLOW)
+	p.editInput.SetColor(fltk_go.YELLOW)
 
 	p.tb.End()
 	win.Resizable(p.tb)
@@ -47,44 +47,44 @@ func (p *Panel) Bind(ctx *Context) {
 		}
 	}
 
-	p.tb.SetDrawCellCallback(func(tc fltk.TableContext, i, j, x, y, w, h int) {
+	p.tb.SetDrawCellCallback(func(tc fltk_go.TableContext, i, j, x, y, w, h int) {
 		row := CellRow(i)
 		col := CellCol(j)
 
 		switch tc {
-		case fltk.ContextRowHeader:
-			fltk.SetDrawFont(fltk.HELVETICA_BOLD, 14)
-			fltk.DrawBox(fltk.UP_BOX, x, y, w, h, fltk.BACKGROUND_COLOR)
-			fltk.SetDrawColor(fltk.BLACK)
-			fltk.Draw(row.String(), x, y, w, h, fltk.ALIGN_CENTER)
-		case fltk.ContextColHeader:
-			fltk.SetDrawFont(fltk.HELVETICA_BOLD, 14)
-			fltk.DrawBox(fltk.UP_BOX, x, y, w, h, fltk.BACKGROUND_COLOR)
-			fltk.SetDrawColor(fltk.BLACK)
-			fltk.Draw(col.String(), x, y, w, h, fltk.ALIGN_CENTER)
-		case fltk.ContextCell:
+		case fltk_go.ContextRowHeader:
+			fltk_go.SetDrawFont(fltk_go.HELVETICA_BOLD, 14)
+			fltk_go.DrawBox(fltk_go.UP_BOX, x, y, w, h, fltk_go.BACKGROUND_COLOR)
+			fltk_go.SetDrawColor(fltk_go.BLACK)
+			fltk_go.Draw(row.String(), x, y, w, h, fltk_go.ALIGN_CENTER)
+		case fltk_go.ContextColHeader:
+			fltk_go.SetDrawFont(fltk_go.HELVETICA_BOLD, 14)
+			fltk_go.DrawBox(fltk_go.UP_BOX, x, y, w, h, fltk_go.BACKGROUND_COLOR)
+			fltk_go.SetDrawColor(fltk_go.BLACK)
+			fltk_go.Draw(col.String(), x, y, w, h, fltk_go.ALIGN_CENTER)
+		case fltk_go.ContextCell:
 			loc := CellLoc{Row: row, Col: col}
 			if p.IsEditingAt(col, row) {
 				p.editInput.Resize(x, y, w, h)
 				return
 			}
-			fltk.SetDrawFont(fltk.HELVETICA, 14)
-			fltk.DrawBox(fltk.FLAT_BOX, x, y, w, h, fltk.BLACK)
-			fltk.DrawBox(fltk.FLAT_BOX, x+1, y+1, w-2, h-2, fltk.WHITE)
-			fltk.SetDrawColor(fltk.BLACK)
-			fltk.Draw(p.cellValues[loc], x, y, w, h, fltk.ALIGN_CENTER)
+			fltk_go.SetDrawFont(fltk_go.HELVETICA, 14)
+			fltk_go.DrawBox(fltk_go.FLAT_BOX, x, y, w, h, fltk_go.BLACK)
+			fltk_go.DrawBox(fltk_go.FLAT_BOX, x+1, y+1, w-2, h-2, fltk_go.WHITE)
+			fltk_go.SetDrawColor(fltk_go.BLACK)
+			fltk_go.Draw(p.cellValues[loc], x, y, w, h, fltk_go.ALIGN_CENTER)
 		}
 	})
 
-	// p.tb.SetCallbackCondition(fltk.WhenNotChanged)
+	// p.tb.SetCallbackCondition(fltk_go.WhenNotChanged)
 	p.tb.SetCallback(func() {
 		tc := p.tb.CallbackContext()
-		if tc != fltk.ContextCell {
+		if tc != fltk_go.ContextCell {
 			p.DoneEditing(ctx)
 			return
 		}
 
-		if fltk.EventClicks() == 0 {
+		if fltk_go.EventClicks() == 0 {
 			p.DoneEditing(ctx)
 			return
 		}
@@ -92,7 +92,7 @@ func (p *Panel) Bind(ctx *Context) {
 		p.StartEditing(ctx)
 	})
 
-	p.editInput.SetCallbackCondition(fltk.WhenEnterKeyAlways)
+	p.editInput.SetCallbackCondition(fltk_go.WhenEnterKeyAlways)
 	p.editInput.SetCallback(func() {
 		p.DoneEditing(ctx)
 	})
@@ -115,7 +115,7 @@ func (p *Panel) StartEditing(ctx *Context) {
 	col := CellCol(p.tb.CallbackColumn())
 	loc := CellLoc{Row: row, Col: col}
 
-	x, y, w, h, err := p.tb.FindCell(fltk.ContextCell, int(row), int(col))
+	x, y, w, h, err := p.tb.FindCell(fltk_go.ContextCell, int(row), int(col))
 	if err != nil {
 		log.Panic("should not go here")
 		return

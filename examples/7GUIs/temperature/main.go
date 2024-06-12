@@ -14,22 +14,22 @@ const (
 )
 
 func main() {
-	fltk.SetScheme("gtk+")
-	fltk.InitStyles()
+	fltk_go.SetScheme("gtk+")
+	fltk_go.InitStyles()
 
-	var cInput, fInput *fltk.FloatInput
+	var cInput, fInput *fltk_go.FloatInput
 
-	win := fltk.NewWindow(
+	win := fltk_go.NewWindow(
 		WIDGET_WIDTH*4+WIDGET_PADDING*2,
 		WIDGET_HEIGHT+WIDGET_PADDING*2)
 	win.SetLabel("TempConv")
 
-	row := fltk.NewFlex(WIDGET_PADDING, WIDGET_PADDING, WIDGET_WIDTH*4, WIDGET_HEIGHT)
-	row.SetType(fltk.ROW)
+	row := fltk_go.NewFlex(WIDGET_PADDING, WIDGET_PADDING, WIDGET_WIDTH*4, WIDGET_HEIGHT)
+	row.SetType(fltk_go.ROW)
 	row.SetGap(WIDGET_PADDING)
 
-	cInput = fltk.NewFloatInput(0, 0, 0, 0)
-	cInput.SetCallbackCondition(fltk.WhenChanged)
+	cInput = fltk_go.NewFloatInput(0, 0, 0, 0)
+	cInput.SetCallbackCondition(fltk_go.WhenChanged)
 	cInput.SetCallback(func() {
 		cVal, err := strconv.ParseFloat(cInput.Value(), 64)
 		if err != nil {
@@ -42,11 +42,11 @@ func main() {
 		fInput.SetValue(strconv.FormatFloat(fVal, 'f', 2, 64))
 	})
 
-	cText := fltk.NewBox(fltk.NO_BOX, 0, 0, 0, 0)
+	cText := fltk_go.NewBox(fltk_go.NO_BOX, 0, 0, 0, 0)
 	cText.SetLabel("Celsius = ")
 
-	fInput = fltk.NewFloatInput(0, 0, 0, 0)
-	fInput.SetCallbackCondition(fltk.WhenChanged)
+	fInput = fltk_go.NewFloatInput(0, 0, 0, 0)
+	fInput.SetCallbackCondition(fltk_go.WhenChanged)
 	fInput.SetCallback(func() {
 		fVal, err := strconv.ParseFloat(fInput.Value(), 64)
 		if err != nil {
@@ -59,11 +59,11 @@ func main() {
 		cInput.SetValue(strconv.FormatFloat(cVal, 'f', 2, 64))
 	})
 
-	fText := fltk.NewBox(fltk.NO_BOX, 0, 0, 0, 0)
+	fText := fltk_go.NewBox(fltk_go.NO_BOX, 0, 0, 0, 0)
 	fText.SetLabel("Fahrenheit")
 
 	row.End()
 	win.End()
 	win.Show()
-	fltk.Run()
+	fltk_go.Run()
 }

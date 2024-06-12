@@ -2,13 +2,12 @@ package main
 
 import (
 	"fmt"
-
 	"github.com/george012/fltk_go"
 )
 
 func main() {
-	win := fltk.NewWindow(300, 200)
-	inputChoice := fltk.NewInputChoice(5, 5, 100, 20, "Input choice")
+	win := fltk_go.NewWindow(300, 200)
+	inputChoice := fltk_go.NewInputChoice(5, 5, 100, 20, "Input choice")
 	menu := inputChoice.MenuButton()
 	menu.Add("An item", func() { fmt.Println("Item selected") })
 	menu.Add("Add item at end", func() { menu.Add("Added item", func() { fmt.Println("Added item selected") }) })
@@ -18,5 +17,5 @@ func main() {
 
 	win.End()
 	win.Show()
-	fltk.Run()
+	fltk_go.Run()
 }

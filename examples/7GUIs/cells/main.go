@@ -32,9 +32,9 @@ func init() {
 }
 
 func main() {
-	fltk.SetScheme("gtk+")
+	fltk_go.SetScheme("gtk+")
 
-	win := fltk.NewWindow(
+	win := fltk_go.NewWindow(
 		WIDGET_WIDTH,
 		WIDGET_HEIGHT)
 	win.SetLabel("Cells")
@@ -44,5 +44,5 @@ func main() {
 
 	win.End()
 	win.Show()
-	fltk.Run()
+	fltk_go.Run()
 }

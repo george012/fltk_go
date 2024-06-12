@@ -7,9 +7,9 @@ import (
 )
 
 func main() {
-	win := fltk.NewWindow(400, 300)
-	box := fltk.NewBox(fltk.FLAT_BOX, 0, 0, 400, 300, "")
-	image, err := fltk.NewJpegImageLoad("image.jpg")
+	win := fltk_go.NewWindow(400, 300)
+	box := fltk_go.NewBox(fltk_go.FLAT_BOX, 0, 0, 400, 300, "")
+	image, err := fltk_go.NewJpegImageLoad("image.jpg")
 	if err != nil {
 		fmt.Printf("An error occured: %s\n", err)
 	} else {
@@ -18,5 +18,5 @@ func main() {
 	}
 	win.End()
 	win.Show()
-	fltk.Run()
+	fltk_go.Run()
 }
