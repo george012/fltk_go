@@ -1,25 +1,35 @@
+<div align="center">
+
+# 1. Document
+
+</div>
+
+<div align="center">
+
+[Document](./README.md) | [中文文档](./README_zh-cn.md)
+
+</div>
+
 <!-- TOC -->
 
-- [1. fltk\_go来源](#1-fltk_go来源)
-- [2. 使用](#2-使用)
-	- [2.1. 依赖](#21-依赖)
-	- [2.2. 使用](#22-使用)
-	- [2.3. 样式](#23-样式)
-	- [2.4. 图像支持](#24-图像支持)
-- [3. 资源](#3-资源)
+- [1. Document](#1-document)
+- [2. fltk\_go来源](#2-fltk_go来源)
+- [3. 使用](#3-使用)
+	- [3.1. 依赖](#31-依赖)
+	- [3.2. 使用](#32-使用)
+	- [3.3. 样式](#33-样式)
+	- [3.4. 图像支持](#34-图像支持)
+- [4. 资源](#4-资源)
 
 <!-- /TOC -->
 
-
 ---
-* [Document](./README.md) | [中文文档](./README_zh-cn.md)
-
-# 1. fltk_go来源
+# 2. fltk_go来源
 * 从 [pwiecz/go-fltk](https://github.com/pwiecz/go-fltk) fork 以 commit hash `5313f8a5a643c8b4f71dabd084cefb9437daa8a7` 为基础变基修改
 * 一个围绕 FLTK 1.4 库的简单封装，FLTK 是一个轻量级 GUI 库，允许创建小型、独立且快速的 GUI 应用程序。
 
-# 2. 使用
-## 2.1. 依赖
+# 3. 使用
+## 3.1. 依赖
 * 要构建 `fltk_go`，除了 `Golang编译器`，你还需要一个 `C++11 编译器`，
 	*	`Linux` 上的 `GCC` 或 `Clang`
 	*	`Windows` 上的 `MinGW64`
@@ -42,7 +52,7 @@
     - Xinerama
     - OpenGL
 
-## 2.2. 使用
+## 3.2. 使用
 * 可以使用 `fltk_go.New<WidgetType>` 函数创建小部件，并对你正在实例化的小部件进行修改。
 函数和方法名与原始 C++ 名称相似，但遵循 Go 语言的 PascalCase 命名习惯。
 设置器方法前缀为 `Set`。
@@ -66,7 +76,7 @@ func main() {
 ```
 
 
-## 2.3. 样式
+## 3.3. 样式
 FLTK 提供了 4 种内置样式：
 - base (默认)
 - gtk+
@@ -133,7 +143,7 @@ func main() {
 
 标签属性可以在[这里](https://www.fltk.org/doc-1.3/common.html#common_labels)查看
 
-## 2.4. 图像支持
+## 3.4. 图像支持
 FLTK 支持矢量和光栅图形，通过几种图像类型：
 - SvgImage
 - RgbImage
@@ -167,6 +177,6 @@ func main() {
 }
 ```
 
-# 3. 资源
+# 4. 资源
 - [官方 FLTK 1.4 文档](https://www.fltk.org/doc-1.4/index.html)
 - [fltk_go 文档](https://pkg.go.dev/github.com/george012/fltk_go) 

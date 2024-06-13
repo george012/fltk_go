@@ -1,5 +1,18 @@
+<div align="center">
+
+# Document
+
+</div>
+
+<div align="center">
+
+[Document](./README.md) | [中文文档](./README_zh-cn.md)
+
+</div>
+
 <!-- TOC -->
 
+- [Document](#document)
 - [1. fltk\_go source](#1-fltk_go-source)
 - [2. Usage](#2-usage)
 	- [2.1. Dependencies](#21-dependencies)
@@ -11,7 +24,6 @@
 <!-- /TOC -->
 
 ---
-* [Document](./README.md) | [中文文档](./README_zh-cn.md)
 
 # 1. fltk_go source
 * Forked from [pwiecz/go-fltk](https://github.com/pwiecz/go-fltk) with commit hash `5313f8a5a643c8b4f71dabd084cefb9437daa8a7` rebased
