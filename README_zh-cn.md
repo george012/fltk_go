@@ -16,7 +16,8 @@
 
 # 1. fltk_go来源
 * 从 [pwiecz/go-fltk](https://github.com/pwiecz/go-fltk) fork 以 commit hash `5313f8a5a643c8b4f71dabd084cefb9437daa8a7` 为基础变基修改
-一个围绕 FLTK 1.4 库的简单封装，FLTK 是一个轻量级 GUI 库，允许创建小型、独立且快速的 GUI 应用程序。
+* 一个围绕 FLTK 1.4 库的简单封装，FLTK 是一个轻量级 GUI 库，允许创建小型、独立且快速的 GUI 应用程序。
+
 # 2. 使用
 ## 2.1. 依赖
 * 要构建 `fltk_go`，除了 `Golang编译器`，你还需要一个 `C++11 编译器`，

@@ -15,7 +15,8 @@
 
 # 1. fltk_go source
 * Forked from [pwiecz/go-fltk](https://github.com/pwiecz/go-fltk) with commit hash `5313f8a5a643c8b4f71dabd084cefb9437daa8a7` rebased
-A simple wrapper around the FLTK 1.4 library, a lightweight GUI library that allows creating small, standalone and fast GUI applications.
+* A simple wrapper around the FLTK 1.4 library, a lightweight GUI library that allows creating small, standalone and fast GUI applications.
+
 # 2. Usage
 ## 2.1. Dependencies
 * To build `fltk_go`, in addition to the `Golang compiler`, you also need a `C++11 compiler`,
