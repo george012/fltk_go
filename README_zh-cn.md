@@ -1,38 +1,35 @@
 <!-- TOC -->
 
-- [1. go-fltk](#1-go-fltk)
-    - [1.1. 依赖](#11-依赖)
-    - [1.2. 使用](#12-使用)
-    - [1.3. 样式](#13-样式)
-    - [1.4. 图像支持](#14-图像支持)
-    - [1.5. 资源](#15-资源)
+- [1. fltk\_go来源](#1-fltk_go来源)
+- [2. 使用](#2-使用)
+	- [2.1. 依赖](#21-依赖)
+	- [2.2. 使用](#22-使用)
+	- [2.3. 样式](#23-样式)
+	- [2.4. 图像支持](#24-图像支持)
+- [3. 资源](#3-资源)
 
 <!-- /TOC -->
 
-# 1. go-fltk
 
 ---
-[![GoDoc](https://img.shields.io/static/v1?label=godoc&message=reference&color=blue)](https://pkg.go.dev/github.com/george012/fltk_go)
+* [Document](./README.md) | [中文文档](./README_zh-cn.md)
 
-* [Document](./README.md)
-* [中文文档](./README_zh-cn.md)
-
+# 1. fltk_go来源
+* 从 [pwiecz/go-fltk](https://github.com/pwiecz/go-fltk) fork 以 commit hash `5313f8a5a643c8b4f71dabd084cefb9437daa8a7` 为基础变基修改
 一个围绕 FLTK 1.4 库的简单封装，FLTK 是一个轻量级 GUI 库，允许创建小型、独立且快速的 GUI 应用程序。
-
-## 1.1. 依赖
-* 要构建 `go-fltk`，除了 `Golang编译器`，你还需要一个 `C++11 编译器`，
+# 2. 使用
+## 2.1. 依赖
+* 要构建 `fltk_go`，除了 `Golang编译器`，你还需要一个 `C++11 编译器`，
 	*	`Linux` 上的 `GCC` 或 `Clang`
 	*	`Windows` 上的 `MinGW64`
 	*	`MacOS` 上的 `XCode`。
 
-* `go-fltk` 带有一些架构的预构建 FLTK 库（linux/amd64, windows/amd64），但你也可以轻松地自己重建它们，或者为其他架构构建它们。
-要为你的平台构建 FLTK 库，只需从 go-fltk 源代码树的根目录运行 go generate。
+* `fltk_go` 带有一些架构的预构建 `FLTK` 库（`linux/amd64`, `windows/amd64`），但你也可以轻松地自己重建它们，或者为其他架构构建它们。
+要为你的平台构建 `FLTK` 库，只需从 `fltk_go` 源代码树的根目录运行 go generate。
 
-*	如果构建过程对你不起作用，你可以自行修改 fltk-build.sh 或 fltk-build.bat，或者在 https://github.com/george012/fltk_go/discussions 提出问题。
+*	要运行使用 fltk_go 构建的程序，你将需要一些系统库，这些库通常在带有图形用户界面的操作系统上是可用的：
 
-*	要运行使用 go-fltk 构建的程序，你将需要一些系统库，这些库通常在带有图形用户界面的操作系统上是可用的：
-
-- Windows: 除了 mingw64 没有外部依赖 ([建议使用msys2的mingw64](./scripts/install_msys2_mingw64.sh))
+- Windows: 除了 `mingw64` 没有外部依赖 ([建议使用msys2的mingw64](./scripts/install_msys2_mingw64.sh))
 - MacOS: 没有外部依赖
 - Linux（和其他未测试的 Unix 系统）: 你需要：
     - X11
@@ -44,7 +41,7 @@
     - Xinerama
     - OpenGL
 
-## 1.2. 使用
+## 2.2. 使用
 * 可以使用 `fltk_go.New<WidgetType>` 函数创建小部件，并对你正在实例化的小部件进行修改。
 函数和方法名与原始 C++ 名称相似，但遵循 Go 语言的 PascalCase 命名习惯。
 设置器方法前缀为 `Set`。
@@ -68,7 +65,7 @@ func main() {
 ```
 
 
-## 1.3. 样式
+## 2.3. 样式
 FLTK 提供了 4 种内置样式：
 - base (默认)
 - gtk+
@@ -135,7 +132,7 @@ func main() {
 
 标签属性可以在[这里](https://www.fltk.org/doc-1.3/common.html#common_labels)查看
 
-## 1.4. 图像支持
+## 2.4. 图像支持
 FLTK 支持矢量和光栅图形，通过几种图像类型：
 - SvgImage
 - RgbImage
@@ -169,6 +166,6 @@ func main() {
 }
 ```
 
-## 1.5. 资源
+# 3. 资源
 - [官方 FLTK 1.4 文档](https://www.fltk.org/doc-1.4/index.html)
-- [go-fltk 文档](https://pkg.go.dev/github.com/george012/fltk_go) 
+- [fltk_go 文档](https://pkg.go.dev/github.com/george012/fltk_go) 

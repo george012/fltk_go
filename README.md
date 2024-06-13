@@ -1,78 +1,88 @@
-# go-fltk
+<!-- TOC -->
+
+- [1. fltk\_go source](#1-fltk_go-source)
+- [2. Usage](#2-usage)
+	- [2.1. Dependencies](#21-dependencies)
+	- [2.2. Usage](#22-usage)
+	- [2.3. Styles](#23-styles)
+	- [2.4. Image support](#24-image-support)
+- [3. Resources](#3-resources)
+
+<!-- /TOC -->
 
 ---
-[![GoDoc](https://img.shields.io/static/v1?label=godoc&message=reference&color=blue)](https://pkg.go.dev/github.com/george012/fltk_go)
+* [Document](./README.md) | [中文文档](./README_zh-cn.md)
 
-* [Document](./README.md)
-* [中文文档](./README_zh-cn.md)
+# 1. fltk_go source
+* Forked from [pwiecz/go-fltk](https://github.com/pwiecz/go-fltk) with commit hash `5313f8a5a643c8b4f71dabd084cefb9437daa8a7` rebased
+A simple wrapper around the FLTK 1.4 library, a lightweight GUI library that allows creating small, standalone and fast GUI applications.
+# 2. Usage
+## 2.1. Dependencies
+* To build `fltk_go`, in addition to the `Golang compiler`, you also need a `C++11 compiler`,
+* `GCC` or `Clang` on `Linux`
+* `MinGW64` on `Windows`
+* `XCode` on `MacOS`.
 
-A simple wrapper around FLTK 1.4 library, which is a lightweight GUI library which allows creating small, self-contained and fast gui applications.
+* `fltk_go` comes with prebuilt `FLTK` libraries for some architectures (`linux/amd64`, `windows/amd64`), but you can easily rebuild them yourself, or build them for other architectures.
+To build the `FLTK` library for your platform, just run go generate from the root of the `fltk_go` source tree.
 
-## Requirements
-For building go-fltk, besides Golang compiler, you will also need a C++11 compiler, such as GCC or Clang on Linux, MinGW on Windows and XCode on MacOS.
+* To run programs built with fltk_go, you will need some system libraries that are typically available on operating systems with a graphical user interface:
 
-go-fltk comes with prebuilt FLTK libraries for some architectures (linux/amd64, windows/amd64), but you can easily rebuild them yourself 
-or build them for other architectures.
-To build FLTK libraries for your platform it should be enough to call `go generate` from the root of the go-fltk source tree.
+- Windows: no external dependencies except `mingw64` ([msys2's mingw64 is recommended](./scripts/install_msys2_mingw64.sh))
 
-If the build procedure doesn't work for you, you can modify `fltk-build.sh` or `fltk-build.bat` yourself or ask a question on `https://github.com/george012/fltk_go/discussions`.
+- MacOS: no external dependencies
+- Linux (and other untested Unix systems): you will need:
+- X11
+- Xrender
+- Xcursor
+- Xfixes
+- Xext
+- Xft
+- Xinerama
+- OpenGL
 
-For running programs built using go-fltk you will need some system libs which are normally available on operating systems with a graphical user interfaces:
-- Windows: No external dependencies, besides a (for mingw64)
-- MacOS: No external dependencies
-- Linux (and other Unix systems - not tested): You need:
-    - X11
-    - Xrender
-    - Xcursor
-    - Xfixes
-    - Xext
-    - Xft
-    - Xinerama
-    - OpenGL
+## 2.2. Usage
+* You can use the `fltk_go.New<WidgetType>` function to create widgets and make modifications to the widget you are instantiating.
+Function and method names are similar to the original C++ names, but follow the Go language's PascalCase naming convention.
 
-## Usage
+Setter methods are prefixed with `Set`.
+
 ```go
 package main
 
 import "github.com/george012/fltk_go"
 
 func main() {
-    win := fltk_go.NewWindow(400, 300)
-    win.SetLabel("Main Window")
-    btn := fltk_go.NewButton(160, 200, 80, 30, "Click")
-    btn.SetCallback(func() {
-        btn.SetLabel("Clicked")
-    })
-    win.End()
-    win.Show()
-    fltk_go.Run()
+win := fltk_go.NewWindow(400, 300)
+win.SetLabel("Main Window")
+btn := fltk_go.NewButton(160, 200, 80, 30, "Click")
+btn.SetCallback(func() {
+btn.SetLabel("Clicked")
+})
+win.End()
+win.Show()
+fltk_go.Run()
 }
 ```
 
-Widgets are created using the `fltk_go.New<WidgetType>` functions, modified for whatever widget you're instantiating.
-Function and method names resemble the original C++ names, while however, following the Golang convention of PascalCase. 
-Setter methods are also preceded by a `Set` prefix.
-
-## Styling
-FLTk offers 4 builtin schemes:
+## 2.3. Styles
+FLTK provides 4 built-in styles:
 - base (default)
 - gtk+
 - gleam
 - plastic
-These can be set using `fltk_go.SetScheme("gtk+")` for example.
+For example, you can use `fltk_go.SetScheme("gtk+")` to set these styles.
 
-FLTK also allows custom styling of your widgets:
+FLTK Also allows customizing the style of the widget:
 ```go
 package main
-
 import (
-	"strconv"
+"strconv"
 
-	"github.com/george012/fltk_go"
+"github.com/george012/fltk_go"
 )
-
-// FLTK uses an RGBI color representation, the I is an index into FLTK's color map
-// Passing 00 as I will use the RGB part of the value
+// FLTK uses RGBI color representation, where I is an index into the FLTK color table
+// Passing 00 as I will use RGB values
 const GRAY = 0x75757500
 const LIGHT_GRAY = 0xeeeeee00
 const BLUE = 0x42A5F500
@@ -81,47 +91,47 @@ const WIDTH = 600
 const HEIGHT = 400
 
 func main() {
-	curr := 0
-	fltk_go.InitStyles()
-	win := fltk_go.NewWindow(WIDTH, HEIGHT)
-	win.SetLabel("Flutter-like")
-	win.SetColor(fltk_go.WHITE)
-	bar := fltk_go.NewBox(fltk_go.FLAT_BOX, 0, 0, WIDTH, 60, "    FLTK App!")
-	bar.SetDrawHandler(func() { // Shadow under the bar
-		fltk_go.DrawBox(fltk_go.FLAT_BOX, 0, 0, WIDTH, 63, LIGHT_GRAY)
-	})
-	bar.SetAlign(fltk_go.ALIGN_INSIDE | fltk_go.ALIGN_LEFT)
-	bar.SetLabelColor(255) // this uses the index into the color map, here it's white
-	bar.SetColor(BLUE)
-	bar.SetLabelSize(22)
-	text := fltk_go.NewBox(fltk_go.NO_BOX, 250, 180, 100, 40, "You have pushed the button this many times:")
-	text.SetLabelSize(18)
-	text.SetLabelFont(fltk_go.TIMES)
-	count := fltk_go.NewBox(fltk_go.NO_BOX, 250, 180+40, 100, 40, "0")
-	count.SetLabelSize(36)
-	count.SetLabelColor(GRAY)
-	btn := fltk_go.NewButton(WIDTH-100, HEIGHT-100, 60, 60, "@+6plus") // this translates into a plus sign
-	btn.SetColor(BLUE)
-	btn.SetSelectionColor(SEL_BLUE)
-	btn.SetLabelColor(255)
-	btn.SetBox(fltk_go.OFLAT_BOX)
-	btn.ClearVisibleFocus()
-	btn.SetCallback(func() {
-		curr += 1
-		count.SetLabel(strconv.Itoa(curr))
-	})
-	win.End()
-	win.Show()
-	fltk_go.Run()
+curr := 0
+fltk.InitStyles()
+win := fltk.NewWindow(WIDTH, HEIGHT)
+win.SetLabel("Flutter-like")
+win.SetColor(fltk.WHITE)
+bar := fltk.NewBox(fltk.FLAT_BOX, 0, 0, WIDTH, 60, " FLTK App!")
+bar.SetDrawHandler(func() { // Shadow under the bar
+fltk.DrawBox(fltk.FLAT_BOX, 0, 0, WIDTH, 63, LIGHT_GRAY)
+})
+bar.SetAlign(fltk.ALIGN_INSIDE | fltk.ALIGN_LEFT)
+bar.SetLabelColor(255) // this uses the index into the color map, here it's white
+bar.SetColor(BLUE)
+bar.SetLabelSize(22)
+text := fltk.NewBox(fltk.NO_BOX, 250, 180, 100, 40, "You have pushed the button this many times:")
+text.SetLabelSize(18)
+text.SetLabelFont(fltk.TIMES)
+count := fltk.NewBox(fltk.NO_BOX, 250, 180+40, 100, 40, "0")
+count.SetLabelSize(36)
+count.SetLabelColor(GRAY)
+btn := fltk.NewButton(WIDTH-100, HEIGHT-100, 60, 60, "@+6plus") // This translates to a plus sign
+btn.SetColor(BLUE)
+btn.SetSelectionColor(SEL_BLUE)
+btn.SetLabelColor(255)
+btn.SetBox(fltk.OFLAT_BOX)
+btn.ClearVisibleFocus()
+btn.SetCallback(func() {
+curr += 1
+count.SetLabel(strconv.Itoa(curr))
+})
+win.End()
+win.Show()
+fltk.Run()
 }
 ```
 
 ![image](https://user-images.githubusercontent.com/37966791/147374840-2d993522-fc86-46fc-9e95-2b3391d31013.png)
 
-Label attributes can be seen [here](https://www.fltk.org/doc-1.3/common.html#common_labels)
+Label properties can be viewed [here](https://www.fltk.org/doc-1.3/common.html#common_labels)
 
-## Image support
-FLTK supports vector and raster graphics, via several image types:
+## 2.4. Image support
+FLTK supports both vector and raster graphics, through several image types:
 - SvgImage
 - RgbImage
 - JpegImage
@@ -129,31 +139,30 @@ FLTK supports vector and raster graphics, via several image types:
 - BmpImage
 - SharedImage
 
-Some of these can be instantiated from an image file or from data:
+Some of these can be instantiated from image files or data:
 ```go
 package main
 
 import (
-	"fmt"
+"fmt"
 
-	"github.com/george012/fltk_go"
-)
+"github.com/george012/fltk_go"
 
 func main() {
-	win := fltk_go.NewWindow(400, 300)
-	box := fltk_go.NewBox(fltk_go.FLAT_BOX, 0, 0, 400, 300, "")
-	image, err := fltk.NewJpegImageLoad("image.jpg")
-	if err != nil {
-		fmt.Printf("An error occured: %s\n", err)
-	} else {
-		box.SetImage(image)
-	}
-	win.End()
-	win.Show()
-	fltk.Run()
+win := fltk.NewWindow(400, 300)
+box := fltk.NewBox(fltk.FLAT_BOX, 0, 0, 400, 300, "")
+image, err := fltk.NewJpegImageLoad("image.jpg")
+if err != nil {
+fmt.Printf("An error occurred: %s\n", err)
+} else {
+box.SetImage(image)
+}
+win.End()
+win.Show()
+fltk.Run()
 }
 ```
 
-## Resources
-- [Link](https://www.fltk.org/doc-1.4/index.html) to the official FLTK 1.4 documentation.
-- [Link](https://pkg.go.dev/github.com/george012/fltk_go) to go-fltk documentation.
+# 3. Resources
+- [Official FLTK 1.4 Documentation](https://www.fltk.org/doc-1.4/index.html)
+- [fltk_go Documentation](https://pkg.go.dev/github.com/george012/fltk_go)
