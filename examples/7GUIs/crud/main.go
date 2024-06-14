@@ -2,10 +2,9 @@ package main
 
 import (
 	"fmt"
+	"github.com/george012/fltk_go"
 	"log"
 	"strings"
-
-	"github.com/george012/fltk_go"
 )
 
 const (

@@ -1,9 +1,8 @@
 package main
 
 import (
-	"strconv"
-
 	"github.com/george012/fltk_go"
+	"strconv"
 )
 
 // FLTK uses an RGBI color representation, the I is an index into FLTK's color map

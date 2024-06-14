@@ -1,8 +1,6 @@
 package main
 
-import (
-	"github.com/george012/fltk_go"
-)
+import "github.com/george012/fltk_go"
 
 const (
 	WIDGET_HEIGHT = 200

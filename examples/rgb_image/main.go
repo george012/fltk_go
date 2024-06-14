@@ -1,10 +1,9 @@
 package main
 
 import (
+	"github.com/george012/fltk_go"
 	goimage "image"
 	"image/color"
-
-	"github.com/george012/fltk_go"
 )
 
 func main() {

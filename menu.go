@@ -51,7 +51,7 @@ func (m *menu) Add(label string, callback func()) int {
 
 // Add adds a new menu item with the given label and shortcut that when
 // chosen (or when the shortcut is pressed) will execute the given callback.
-// Set flags to fltk.MENU_DIVIDER to create a separator after this menu
+// Set flags to fltk_go.MENU_DIVIDER to create a separator after this menu
 // item. Returns the new item's index.
 func (m *menu) AddEx(label string, shortcut int, callback func(), flags int) int {
 	callbackId := globalCallbackMap.register(callback)
@@ -164,7 +164,7 @@ func (m *MenuButton) SetType(menuType MenuType) {
 func (m *MenuButton) Popup() {
 	if m.Size() > 0 {
 		// Fltk may crash when Popup is called on empty menu.
-		// https://github.com/george012/fltk_go/issues/64
+		// https://github.com/pwiecz/go-fltk/issues/64
 		C.go_fltk_MenuButton_popup((*C.Fl_Menu_Button)(m.ptr()))
 	}
 }

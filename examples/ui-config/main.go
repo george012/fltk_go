@@ -1,9 +1,8 @@
 package main
 
 import (
-	"strings"
-
 	"github.com/george012/fltk_go"
+	"strings"
 )
 
 const (

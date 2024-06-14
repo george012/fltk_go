@@ -1,9 +1,8 @@
 package main
 
 import (
-	"log"
-
 	"github.com/george012/fltk_go"
+	"log"
 )
 
 type Panel struct {
@@ -76,7 +75,7 @@ func (p *Panel) Bind(ctx *Context) {
 		}
 	})
 
-	// p.tb.SetCallbackCondition(fltk_go.WhenNotChanged)
+	// p.tb.SetCallbackCondition(fltk.WhenNotChanged)
 	p.tb.SetCallback(func() {
 		tc := p.tb.CallbackContext()
 		if tc != fltk_go.ContextCell {

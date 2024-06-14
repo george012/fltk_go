@@ -1,6 +1,8 @@
 package main
 
-import "github.com/george012/fltk_go"
+import (
+	"github.com/george012/fltk_go"
+)
 
 func main() {
 	win := fltk_go.NewWindow(320, 180)

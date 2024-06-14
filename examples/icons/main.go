@@ -3,11 +3,10 @@ package main
 import (
 	"bytes"
 	_ "embed"
+	"github.com/george012/fltk_go"
 	"image"
 	_ "image/png"
 	"runtime"
-
-	"github.com/george012/fltk_go"
 )
 
 //go:embed 8x8.png

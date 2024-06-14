@@ -1,10 +1,10 @@
 package main
 
 import (
+	"github.com/george012/fltk_go"
 	"log"
 	"runtime"
 
-	"github.com/george012/fltk_go"
 	"github.com/go-gl/gl/v2.1/gl"
 )
 

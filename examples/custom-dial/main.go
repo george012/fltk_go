@@ -1,9 +1,8 @@
 package main
 
 import (
-	"strconv"
-
 	"github.com/george012/fltk_go"
+	"strconv"
 )
 
 type MyDial struct {

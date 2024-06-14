@@ -2,9 +2,8 @@ package main
 
 import (
 	"fmt"
-	"time"
-
 	"github.com/george012/fltk_go"
+	"time"
 )
 
 const (

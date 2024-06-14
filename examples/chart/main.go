@@ -1,10 +1,9 @@
 package main
 
 import (
+	"github.com/george012/fltk_go"
 	"math/rand"
 	"strconv"
-
-	"github.com/george012/fltk_go"
 )
 
 func main() {

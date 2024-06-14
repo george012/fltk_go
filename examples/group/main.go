@@ -2,9 +2,8 @@ package main
 
 import (
 	"fmt"
-	"runtime"
-
 	"github.com/george012/fltk_go"
+	"runtime"
 )
 
 func main() {
