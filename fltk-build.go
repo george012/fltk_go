@@ -216,7 +216,7 @@ func main() {
 	}
 	defer cgoFile.Close()
 	fmt.Fprintf(cgoFile, "//go:build %s && %s\n\n", runtime.GOOS, runtime.GOARCH)
-	fmt.Fprintln(cgoFile, "package fltk\n")
+	fmt.Fprintln(cgoFile, "package fltk_go\n")
 	fmt.Fprintf(cgoFile, "// #cgo %s,%s CXXFLAGS: -std=c++11\n", runtime.GOOS, runtime.GOARCH)
 
 	if runtime.GOOS != "windows" {
