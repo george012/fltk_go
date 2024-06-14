@@ -143,16 +143,23 @@ func main() {
 		cmakeCmd.Args = append(cmakeCmd.Args, "-DCMAKE_OSX_DEPLOYMENT_TARGET=12.0")
 
 		// Get the SDK path using xcrun
-		//sdkPathCmd := exec.Command("xcrun", "--sdk", "macosx", "--show-sdk-path")
-		//sdkPathOutput, err := sdkPathCmd.Output()
-		//if err != nil {
-		//	fmt.Printf("Error getting SDK path, %v\n", err)
-		//	os.Exit(1)
-		//}
-		//sdkPath := strings.TrimSpace(string(sdkPathOutput))
-		//cmakeCmd.Args = append(cmakeCmd.Args, "-DCMAKE_OSX_SYSROOT="+sdkPath)
+		sdkPathCmd := exec.Command("xcrun", "--sdk", "macosx", "--show-sdk-path")
+		sdkPathOutput, err := sdkPathCmd.Output()
+		if err != nil {
+			fmt.Printf("Error getting SDK path, %v\n", err)
+			os.Exit(1)
+		}
+		normalDir := "MacOSX.sdk"
+		// 获取目录路径和最后一层目录名称
+		dir, _ := filepath.Split(string(sdkPathOutput))
+		// 获取父目录
+		parentDir := filepath.Dir(dir)
+		// 拼接新路径
+		newPath := filepath.Join(parentDir, normalDir)
+		sdkPath := strings.TrimSpace(string(newPath))
+		cmakeCmd.Args = append(cmakeCmd.Args, "-DCMAKE_OSX_SYSROOT="+sdkPath)
 
-		cmakeCmd.Args = append(cmakeCmd.Args, "-DCMAKE_OSX_SYSROOT="+"/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk")
+		//cmakeCmd.Args = append(cmakeCmd.Args, "-DCMAKE_OSX_SYSROOT="+"/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk")
 
 		if runtime.GOARCH == "amd64" {
 			cmakeCmd.Args = append(cmakeCmd.Args, "-DCMAKE_OSX_ARCHITECTURES=x86_64")
