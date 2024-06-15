@@ -6,6 +6,7 @@ package fltk_go
 */
 import "C"
 import (
+	"github.com/george012/fltk_go/config"
 	"sync"
 	"unsafe"
 )
@@ -590,10 +591,10 @@ func _go_drawBox56(x, y, w, h C.int, c C.uint) {
 	setBoxTypeCb[56](int(x), int(y), int(w), int(h), Color(c))
 }
 
-func Version() string {
+func VersionByFltk() string {
 	return "v1.4.0"
 }
 
-func GoVersion() string {
-	return "v0.1.0"
+func Version() string {
+	return config.ProjectVersion
 }
