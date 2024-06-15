@@ -32,9 +32,8 @@ jobs:
           go-version: '>=1.18.0'
 
       - name: do testing
-        shell: bash
         run: |
-          go test -v ./...
+          go test -v ./...  
 
   Release:
     runs-on: ubuntu-latest
