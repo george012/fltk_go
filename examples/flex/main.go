@@ -2,12 +2,18 @@ package main
 
 import (
 	"github.com/george012/fltk_go"
+	"runtime"
 	"strconv"
 )
 
 var i = 0
 
 func main() {
+	// 锁定当前的 goroutine 到操作系统线程
+	runtime.LockOSThread()
+	// 锁定 FLTK 库
+	fltk_go.Lock()
+
 	win := fltk_go.NewWindow(300, 200)
 	column := fltk_go.NewFlex(0, 0, 300, 200)
 	column.SetType(fltk_go.COLUMN)
