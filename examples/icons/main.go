@@ -32,7 +32,7 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
-	win := fltk_go.NewWindow(300, 200)
+	win := fltk_go.NewWindow(300, 200, "icons example")
 	rgbIcon8, err := fltk_go.NewRgbImageFromImage(icon8)
 	if err != nil {
 		panic(err)

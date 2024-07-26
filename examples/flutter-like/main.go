@@ -17,8 +17,8 @@ const HEIGHT = 400
 func main() {
 	curr := 0
 	fltk_go.InitStyles()
-	win := fltk_go.NewWindow(WIDTH, HEIGHT)
-	win.SetLabel("Flutter-like")
+	win := fltk_go.NewWindow(WIDTH, HEIGHT, "flutter like example")
+	//win.SetLabel("flutter like example")
 	win.SetColor(fltk_go.WHITE)
 	bar := fltk_go.NewBox(fltk_go.FLAT_BOX, 0, 0, WIDTH, 60, "    FLTK App!")
 	bar.SetDrawHandler(func(baseDraw func()) { // Shadow under the bar

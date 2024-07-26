@@ -7,7 +7,7 @@ import (
 )
 
 func main() {
-	win := fltk_go.NewWindow(300, 200)
+	win := fltk_go.NewWindow(300, 200, "group example")
 	group := fltk_go.NewGroup(5, 20, 285, 170, "Group")
 	fltk_go.NewButton(10, 10, 50, 20, "Button")
 	group.End()

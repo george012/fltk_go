@@ -6,7 +6,7 @@ import (
 )
 
 func main() {
-	win := fltk_go.NewWindow(300, 200)
+	win := fltk_go.NewWindow(300, 200, "table example")
 	table := fltk_go.NewTableRow(5, 5, 295, 190)
 	table.EnableColumnHeaders()
 	table.EnableRowHeaders()

@@ -6,7 +6,7 @@ import (
 )
 
 func main() {
-	win := fltk_go.NewWindow(300, 135)
+	win := fltk_go.NewWindow(300, 135, "help view example")
 	helpView := fltk_go.NewHelpView(5, 5, 290, 100)
 	helpContent := "List:<ul>"
 	for i := 0; i < 100; i++ {

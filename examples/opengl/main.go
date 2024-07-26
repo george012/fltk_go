@@ -35,7 +35,7 @@ func main() {
 	}
 	fltk_go.SetKeyboardScreenScaling(false)
 	win := &MainWindow{}
-	win.Window = fltk_go.NewWindow(415, 405)
+	win.Window = fltk_go.NewWindow(415, 405, "opengl example")
 	win.SetBox(fltk_go.UP_BOX)
 	win.SetLabelSize(12)
 	o := fltk_go.NewGroup(5, 3, 374, 399)

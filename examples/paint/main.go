@@ -3,7 +3,7 @@ package main
 import "github.com/george012/fltk_go"
 
 func main() {
-	win := fltk_go.NewWindow(800, 600)
+	win := fltk_go.NewWindow(800, 600, "paint example")
 	box := fltk_go.NewBox(fltk_go.NO_BOX, 3, 3, 800-6, 600-6)
 	box.SetColor(fltk_go.WHITE)
 	win.End()

@@ -1,6 +1,6 @@
 module github.com/george012/fltk_go/examples/opengl
 
-go 1.17
+go 1.18
 
 require (
 	github.com/george012/fltk_go v0.0.1

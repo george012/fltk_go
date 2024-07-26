@@ -7,7 +7,7 @@ import (
 )
 
 func main() {
-	win := fltk_go.NewWindow(400, 300)
+	win := fltk_go.NewWindow(400, 300, "rgb_image example")
 
 	{
 		data := make([]uint8, 0, 10000*3)

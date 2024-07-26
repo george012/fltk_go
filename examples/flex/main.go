@@ -14,7 +14,7 @@ func main() {
 	// 锁定 FLTK 库
 	fltk_go.Lock()
 
-	win := fltk_go.NewWindow(300, 200)
+	win := fltk_go.NewWindow(300, 200, "flex example")
 	column := fltk_go.NewFlex(0, 0, 300, 200)
 	column.SetType(fltk_go.COLUMN)
 	column.SetGap(5)

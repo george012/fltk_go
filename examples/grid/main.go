@@ -5,7 +5,7 @@ import (
 )
 
 func main() {
-	win := fltk_go.NewWindow(320, 180)
+	win := fltk_go.NewWindow(320, 180, "grid example")
 	grid := fltk_go.NewGrid(0, 0, win.W(), win.H())
 	grid.SetLayout(3, 3, 10, 10)
 	grid.SetColor(fltk_go.WHITE)

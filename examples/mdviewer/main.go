@@ -22,7 +22,7 @@ func main() {
 	win := fltk_go.NewWindow(
 		WIDGET_WIDTH*2+WIDGET_PADDING*3,
 		WIDGET_HEIGHT*1+WIDGET_PADDING*2)
-	win.SetLabel("MDViewer")
+	win.SetLabel("Markdown Viewer")
 	win.Resizable(win)
 
 	hpack := fltk_go.NewPack(WIDGET_PADDING, WIDGET_PADDING, win.W(), WIDGET_HEIGHT)

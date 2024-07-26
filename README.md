@@ -6,7 +6,7 @@
 
 <div align="center">
 
-[Document](./README.md) | [中文文档](./README_zh-cn.md)
+[Document](./README.md) | [中文文档](./README_zh-cn.md) | [examples](./examples/README.md)
 
 </div>
 

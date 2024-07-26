@@ -24,7 +24,7 @@ func main() {
 	buf := fltk_go.NewTextBuffer()
 	sbuf := fltk_go.NewTextBuffer()
 
-	window := fltk_go.NewWindow(600, 400)
+	window := fltk_go.NewWindow(600, 400, "styled_text example")
 	disp := fltk_go.NewTextDisplay(0, 0, 600, 400)
 	disp.SetBuffer(buf)
 	disp.SetHighlightData(sbuf, entries)

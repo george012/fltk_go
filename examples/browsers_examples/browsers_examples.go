@@ -1,14 +1,13 @@
-package browser_test
+package main
 
 import (
 	"fmt"
 	"github.com/george012/fltk_go"
-	"testing"
 )
 
-func TestBrowsers(t *testing.T) {
+func BrowsersSimple() {
 	fltk_go.SetScheme("base")
-	win := fltk_go.NewWindow(1200, 800)
+	win := fltk_go.NewWindow(1024, 768)
 	win.SetLabel("Browser simple")
 
 	grid := fltk_go.NewGrid(0, 0, win.W(), win.H())
@@ -82,4 +81,8 @@ func TestBrowsers(t *testing.T) {
 	win.Resizable(grid)
 	win.Show()
 	fltk_go.Run()
+}
+
+func main() {
+	BrowsersSimple()
 }
