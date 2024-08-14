@@ -162,6 +162,14 @@ func DrawRtl(text string, x, y int) {
 	C.go_fltk_rtl_draw(textStr, C.int(len(text)), C.int(x), C.int(y))
 }
 
+// MeasureText
+/*
+	en: Measure the length and width of a string in fltk_go in UI pixels;;
+	zh-CN: 测量字符串在`fltk_go`中的 所占用UI像素的 长度和宽度;
+	@params [☑]text en: text sting type; zh-CN: `sting`格式;
+	@params [☑]draw_symbols en: Whether to handle special symbols in strings; zh-CN: 是否处理字符串中的特殊符号;
+	@return [☑]width int,high int en: Returns the font height and width; zh-CN: 返回字体高和宽;
+*/
 func MeasureText(text string, draw_symbols bool) (int, int) {
 	textStr := C.CString(text)
 	defer C.free(unsafe.Pointer(textStr))
