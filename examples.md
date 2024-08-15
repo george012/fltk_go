@@ -40,13 +40,13 @@
 ## 1.1. 7GUIs
 titile     | pre raw|
 |--------|-----|
-|7GUIs_cell|![7GUIs_cell](./examples/7Guis/cells/screenshot.png)|
-|7GUIs_circle|![7GUIs_circle](./examples/7Guis/circle/screenshot.png)|
-|7GUIs_counter|![7GUIs_counter](./examples/7Guis/counter/screenshot.png)|
-|7GUIs_crud|![7GUIs_crud](./examples/7Guis/crud/screenshot.png)|
-|7GUIs_flightbooker|![7GUIs_flightbooker1](./examples/7Guis/flightbooker/screenshot1.png) ![7GUIs_flightbooker2](./examples/7Guis/flightbooker/screenshot2.png) ![7GUIs_flightbooker3](./examples/7Guis/flightbooker/screenshot3.png)|
-|7GUIs_temperature|![7GUIs_temperature](./examples/7Guis/temperature/screenshot.png)|
-|7GUIs_Timer|![7GUIs_timer](./examples/7Guis/timer/screenshot.png)|
+|7GUIs_cell|![7GUIs_cell](./examples/7GUIs/cells/screenshot.png)|
+|7GUIs_circle|![7GUIs_circle](./examples/7GUIs/circle/screenshot.png)|
+|7GUIs_counter|![7GUIs_counter](./examples/7GUIs/counter/screenshot.png)|
+|7GUIs_crud|![7GUIs_crud](./examples/7GUIs/crud/screenshot.png)|
+|7GUIs_flightbooker|![7GUIs_flightbooker1](./examples/7GUIs/flightbooker/screenshot1.png) ![7GUIs_flightbooker2](./examples/7GUIs/flightbooker/screenshot2.png) ![7GUIs_flightbooker3](./examples/7GUIs/flightbooker/screenshot3.png)|
+|7GUIs_temperature|![7GUIs_temperature](./examples/7GUIs/temperature/screenshot.png)|
+|7GUIs_Timer|![7GUIs_timer](./examples/7GUIs/timer/screenshot.png)|
 
 ## 1.2. browsers
 ![browsers](./examples/browsers_examples/screenshot.png)
