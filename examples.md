@@ -16,7 +16,7 @@
   - [1.12. icons](#112-icons)
   - [1.13. image](#113-image)
   - [1.14. input\_choice](#114-input_choice)
-  - [1.15. maviewver](#115-maviewver)
+  - [1.15. mdviewer](#115-mdviewer)
   - [1.16. native\_file\_chooser](#116-native_file_chooser)
   - [1.17. opengl](#117-opengl)
   - [1.18. paint](#118-paint)
@@ -87,8 +87,8 @@ titile     | pre raw|
 ## 1.14. input_choice
 ![input_choice](./examples/input_choice/screenshot.png)
 
-## 1.15. maviewver
-![maviewver](./examples/maviewver/screenshot.png)
+## 1.15. mdviewer
+![mdviewer](./examples/mdviewer/screenshot.png)
 
 ## 1.16. native_file_chooser
 ![native_file_chooser](./examples/native_file_chooser/screenshot.png)

@@ -15,8 +15,8 @@
 - [1. Document](#1-document)
 - [2. fltk\_go来源](#2-fltk_go来源)
 - [3. 使用](#3-使用)
-	- [3.1. 依赖](#31-依赖)
-	- [3.2. 使用样例](#32-使用样例)
+  - [3.1. 依赖](#31-依赖)
+  - [3.2. 使用样例](#32-使用样例)
 - [4. 资源](#4-资源)
 
 <!-- /TOC -->
@@ -51,7 +51,7 @@
     - OpenGL
 
 ## 3.2. 使用样例
-![example show case)](./examples.md)
+[![example showcase](./examples.png)](./examples.png)
 
 # 4. 资源
 - [官方 FLTK 1.4 文档](https://www.fltk.org/doc-1.4/index.html)

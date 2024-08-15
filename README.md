@@ -53,7 +53,7 @@ To build the `FLTK` library for your platform, just run go generate from the roo
 - OpenGL
 
 ## 3.2. Usage Example
-![example show case)](./examples.md)
+[![example showcase](./examples.png)](./examples.png)
 
 
 # 4. Resources
