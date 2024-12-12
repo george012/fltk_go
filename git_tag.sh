@@ -4,7 +4,9 @@ set -e
 
 ProductName=$(grep ProjectName ./config/config.go | awk -F '"' '{print $2}' | sed 's/\"//g')
 Product_version_key="ProjectVersion"
+REPO_PFEX=george012/$ProductName
 VersionFile=./config/config.go
+
 CURRENT_VERSION=$(grep ${Product_version_key} $VersionFile | awk -F '"' '{print $2}' | sed 's/\"//g')
 
 NEXT_VERSION=""
@@ -51,9 +53,9 @@ function to_run() {
     elif [ "$1" == "custom" ]; then
         echo "============================ ${ProductName} ============================"
         echo "  1、release [-${ProductName}-]"
-        echo "  current version: [-${CURRENT_VERSION}-]"
+        echo "  current version [-${CURRENT_VERSION}-]"
         echo "======================================================================"
-        read -p "$(echo -e "please input version: [simple；v0.0.1]")" inputString
+        read -p "$(echo -e "please input version string [example；v0.0.1]")" inputString
         if [[ "$inputString" =~ ^v.* ]]; then
             NEXT_VERSION=${inputString}
         else
@@ -112,7 +114,7 @@ function git_handle_push() {
     echo "Pre Del Version With v"${pre_del_version_no}
 
     git add . \
-    && git commit -m "Update v${next_version_no}" \
+    && git commit -m "Release v${next_version_no}_$(date -u +"%Y-%m-%d_%H:%M:%S")"_"UTC" \
     && git tag v${next_version_no} \
     && git tag -f latest v${next_version_no}
 
