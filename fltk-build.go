@@ -389,8 +389,7 @@ func generateWindowsCgoFlags(cgoFile *os.File, cfg BuildConfig) {
 
 	fmt.Fprintf(cgoFile, "// #cgo %s,%s CPPFLAGS: -I${SRCDIR}/%s -I${SRCDIR}/%s/FL/images -D_LARGEFILE_SOURCE -D_LARGEFILE64_SOURCE -D_FILE_OFFSET_BITS=64\n",
 		cfg.OS, cfg.Arch, includeDirWithSlashes, includeDirWithSlashes)
-
-	fmt.Fprintf(cgoFile, `// #cgo %s,%s LDFLAGS: -mwindows ${SRCDIR}/%s/libfltk_images.a ${SRCDIR}/%s/libfltk_jpeg.a ${SRCDIR}/%s/libfltk_png.a ${SRCDIR}/%s/libfltk_z.a ${SRCDIR}/%s/libfltk_gl.a -lglu32 -lopengl32 ${SRCDIR}/%s/libfltk_forms.a ${SRCDIR}/%s/libfltk.a -lgdiplus -lole32 -luuid -lcomctl32 -lws2_32 -lwinspool
+	fmt.Fprintf(cgoFile, `// #cgo %s,%s LDFLAGS: -mwindows ${SRCDIR}/%s/libfltk_images.a ${SRCDIR}/%s/libfltk_jpeg.a ${SRCDIR}/%s/libfltk_png.a ${SRCDIR}/%s/libfltk_z.a ${SRCDIR}/%s/libfltk_gl.a -lglu32 -lopengl32 ${SRCDIR}/%s/libfltk_forms.a ${SRCDIR}/%s/libfltk.a -lgdiplus -lole32 -luuid -lcomctl32 -lws2_32 -lwinspool -lmsvcrt
 `, cfg.OS, cfg.Arch, libDirWithSlashes, libDirWithSlashes, libDirWithSlashes, libDirWithSlashes, libDirWithSlashes, libDirWithSlashes, libDirWithSlashes)
 }
 

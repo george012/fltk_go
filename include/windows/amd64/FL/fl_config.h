@@ -71,7 +71,7 @@
  * Do we use Cairo to draw to the display?
  *
  */
- 
+
 /* #undef FLTK_USE_CAIRO */
 
 
