@@ -2,7 +2,7 @@
 /*
  * Build configuration file for the Fast Light Tool Kit (FLTK).
  *
- * Copyright 1998-2021 by Bill Spitzak and others.
+ * Copyright 1998-2024 by Bill Spitzak and others.
  *
  * This library is free software. Distribution and use rights are outlined in
  * the file "COPYING" which should have been included with this file.  If this
@@ -47,13 +47,22 @@
 
 
 /*
+ * FLTK_HAVE_FORMS
+ *
+ * Do we have the Forms compatibility library available?
+*/
+
+#define FLTK_HAVE_FORMS 1
+
+
+/*
  * FLTK_USE_X11
  *
  * Do we use X11 for the current platform?
  *
  */
 
-#define FLTK_USE_X11 1
+/* #undef FLTK_USE_X11 */
 
 
 /*
@@ -87,5 +96,16 @@
  */
 
 #define FLTK_USE_STD 0
+
+
+/*
+ * FLTK_USE_SVG
+ *
+ * Do we want FLTK to read and write SVG-formatted files ?
+ *
+ */
+
+#define FLTK_USE_SVG 1
+
 
 #endif /* _FL_fl_config_h_ */
