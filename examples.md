@@ -40,8 +40,8 @@
 ## 1.1. 7GUIs
 titile     | pre raw|
 |--------|-----|
-|7GUIs_cell|![7GUIs_cell](./examples/7GUIs/cells/screenshot.png)|
-|7GUIs_circle|![7GUIs_circle](./examples/7GUIs/circle/screenshot.png)|
+|7GUIs_cell|![7GUIs_cell](examples/7GUIs/sg_cells/screenshot.png)|
+|7GUIs_circle|![7GUIs_circle](examples/7GUIs/sg_circle/screenshot.png)|
 |7GUIs_counter|![7GUIs_counter](./examples/7GUIs/counter/screenshot.png)|
 |7GUIs_crud|![7GUIs_crud](./examples/7GUIs/crud/screenshot.png)|
 |7GUIs_flightbooker|![7GUIs_flightbooker1](./examples/7GUIs/flightbooker/screenshot1.png) ![7GUIs_flightbooker2](./examples/7GUIs/flightbooker/screenshot2.png) ![7GUIs_flightbooker3](./examples/7GUIs/flightbooker/screenshot3.png)|

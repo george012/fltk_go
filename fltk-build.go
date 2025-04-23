@@ -13,7 +13,8 @@ import (
 	"strings"
 )
 
-const commit = "eb759cb118fbf09da51938c04978e609822dbb48"
+// const commit = "eb759cb118fbf09da51938c04978e609822dbb48"
+const commit = "tags/release-1.4.2"
 
 func main() {
 	if runtime.GOOS == "" {
@@ -128,15 +129,16 @@ func main() {
 		"-DFLTK_BUILD_TEST=OFF",
 		"-DFLTK_BUILD_EXAMPLES=OFF",
 		"-DFLTK_BUILD_FLUID=OFF",
+		"-DFLTK_BUILD_HTML_DOCS=OFF",
+		"-DFLTK_BUILD_PDF_DOCS=OFF",
 		"-DFLTK_BUILD_FLTK_OPTIONS=OFF",
-		"-DOPTION_USE_WAYLAND=OFF",
-		"-DOPTION_USE_SYSTEM_LIBJPEG=OFF",
-		"-DOPTION_USE_SYSTEM_LIBPNG=OFF",
-		"-DOPTION_USE_SYSTEM_ZLIB=OFF",
+		"-DFLTK_USE_SYSTEM_LIBJPEG=OFF",
+		"-DFLTK_USE_SYSTEM_LIBPNG=OFF",
+		"-DFLTK_USE_SYSTEM_ZLIB=OFF",
 		"-DCMAKE_INSTALL_PREFIX="+currentDir,
-		"-DCMAKE_INSTALL_INCLUDEDIR=include",
-		"-DCMAKE_INSTALL_LIBDIR="+libdir,
-		"-DFLTK_INCLUDEDIR="+filepath.Join(currentDir, "include"),
+		"-DCMAKE_INSTALL_INCLUDEDIR="+includeDir,
+		"-DCMAKE_INSTALL_LIBDIR="+libDir,
+		"-DFLTK_INCLUDEDIR="+filepath.Join(currentDir, "include", runtime.GOOS, runtime.GOARCH),
 		"-DFLTK_LIBDIR="+filepath.Join(currentDir, "lib", runtime.GOOS, runtime.GOARCH))
 
 	if runtime.GOOS == "darwin" {
