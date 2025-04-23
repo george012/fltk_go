@@ -191,6 +191,7 @@ func generateUniversalCgoFile() {
 	ldFlags := getCommandOutput(fltkConfigPath, []string{"--use-gl", "--use-images", "--use-forms", "--ldstaticflags"})
 	ldFlags = strings.ReplaceAll(ldFlags, cfg.CurrentDir, "${SRCDIR}")
 	ldFlags = strings.ReplaceAll(ldFlags, " -weak_framework", "")
+	ldFlags = strings.ReplaceAll(ldFlags, " UniformTypeIdentifiers", "")
 	ldFlags = strings.ReplaceAll(ldFlags, cfg.LibDir, filepath.Join("lib", cfg.OS, "universal"))
 	if cfg.OS == "openbsd" {
 		ldFlags = "-L/usr/X11R6/lib " + ldFlags
@@ -374,6 +375,7 @@ func generateUnixCgoFlags(cgoFile *os.File, cfg BuildConfig) {
 	ldFlags := getCommandOutput(fltkConfigPath, []string{"--use-gl", "--use-images", "--use-forms", "--ldstaticflags"})
 	ldFlags = strings.ReplaceAll(ldFlags, cfg.CurrentDir, "${SRCDIR}")
 	ldFlags = strings.ReplaceAll(ldFlags, " -weak_framework", "")
+	ldFlags = strings.ReplaceAll(ldFlags, " UniformTypeIdentifiers", "")
 	if cfg.OS == "openbsd" {
 		ldFlags = "-L/usr/X11R6/lib " + ldFlags
 	}
