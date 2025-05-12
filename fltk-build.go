@@ -13,7 +13,8 @@ import (
 	"strings"
 )
 
-const commit = "eb759cb118fbf09da51938c04978e609822dbb48"
+// const commit = "eb759cb118fbf09da51938c04978e609822dbb48"
+const fltkLibReleaseVersion = "release-1.4.3"
 
 func main() {
 	if runtime.GOOS == "" {
@@ -95,7 +96,7 @@ func main() {
 		os.Exit(1)
 	}
 
-	checkoutCmd := exec.Command("git", "checkout", commit)
+	checkoutCmd := exec.Command("git", "checkout", fltkLibReleaseVersion)
 	checkoutCmd.Dir = fltkSourceDir
 	checkoutCmd.Stdout = os.Stdout
 	checkoutCmd.Stderr = os.Stderr
@@ -133,6 +134,7 @@ func main() {
 		"-DOPTION_USE_SYSTEM_LIBJPEG=OFF",
 		"-DOPTION_USE_SYSTEM_LIBPNG=OFF",
 		"-DOPTION_USE_SYSTEM_ZLIB=OFF",
+		"-DOPTION_BUILD_SHARED_LIBS=OFF", // static lib style
 		"-DCMAKE_INSTALL_PREFIX="+currentDir,
 		"-DCMAKE_INSTALL_INCLUDEDIR=include",
 		"-DCMAKE_INSTALL_LIBDIR="+libdir,
