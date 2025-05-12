@@ -1,6 +1,8 @@
-package main
+package seven_gui_circle_panel
 
 import (
+	"examples/7GUIs/circle/circle_cfg"
+	"examples/7GUIs/circle/seven_gui_circle_context"
 	"fmt"
 	"github.com/george012/fltk_go"
 	"runtime"
@@ -21,13 +23,13 @@ func NewPanel(win *fltk_go.Window) *Panel {
 	p := &Panel{}
 	p.win = win
 
-	col := fltk_go.NewFlex(WIDGET_PADDING, WIDGET_PADDING, win.W()-WIDGET_PADDING*2, win.H()-WIDGET_PADDING*2)
-	col.SetGap(WIDGET_PADDING)
+	col := fltk_go.NewFlex(circle_cfg.WIDGET_PADDING, circle_cfg.WIDGET_PADDING, win.W()-circle_cfg.WIDGET_PADDING*2, win.H()-circle_cfg.WIDGET_PADDING*2)
+	col.SetGap(circle_cfg.WIDGET_PADDING)
 
 	row := fltk_go.NewFlex(0, 0, 0, 0)
-	col.Fixed(row, WIDGET_HEIGHT)
+	col.Fixed(row, circle_cfg.WIDGET_HEIGHT)
 	row.SetType(fltk_go.ROW)
-	row.SetGap(WIDGET_PADDING)
+	row.SetGap(circle_cfg.WIDGET_PADDING)
 
 	fltk_go.NewBox(fltk_go.NO_BOX, 0, 0, 0, 0) // invisible
 
@@ -46,17 +48,17 @@ func NewPanel(win *fltk_go.Window) *Panel {
 	col.End()
 	win.Resizable(col)
 
-	p.adjustDlg = fltk_go.NewWindow(WIDGET_WIDTH*2+WIDGET_PADDING*2, WIDGET_HEIGHT*2+WIDGET_PADDING*3)
+	p.adjustDlg = fltk_go.NewWindow(circle_cfg.WIDGET_WIDTH*2+circle_cfg.WIDGET_PADDING*2, circle_cfg.WIDGET_HEIGHT*2+circle_cfg.WIDGET_PADDING*3)
 	p.adjustDlg.SetModal()
 
-	row = fltk_go.NewFlex(WIDGET_PADDING, WIDGET_PADDING, WIDGET_WIDTH*2, WIDGET_HEIGHT*2)
+	row = fltk_go.NewFlex(circle_cfg.WIDGET_PADDING, circle_cfg.WIDGET_PADDING, circle_cfg.WIDGET_WIDTH*2, circle_cfg.WIDGET_HEIGHT*2)
 	p.adjustTips = fltk_go.NewBox(fltk_go.NO_BOX, 0, 0, 0, 0)
 	p.adjustTips.SetLabel("Adjust diameter")
 	p.adjustSlider = fltk_go.NewSlider(0, 0, 0, 0)
 	p.adjustSlider.SetType(fltk_go.HOR_NICE_SLIDER)
-	p.adjustSlider.SetMaximum(MAX_RADIUS)
-	p.adjustSlider.SetMinimum(MIN_RADIUS)
-	p.adjustSlider.SetValue(DEF_RADIUS)
+	p.adjustSlider.SetMaximum(seven_gui_circle_context.MAX_RADIUS)
+	p.adjustSlider.SetMinimum(seven_gui_circle_context.MIN_RADIUS)
+	p.adjustSlider.SetValue(seven_gui_circle_context.DEF_RADIUS)
 	row.End()
 
 	// SetModal makes the dialog's close button disappear on Windows
@@ -76,7 +78,7 @@ func NewPanel(win *fltk_go.Window) *Panel {
 	return p
 }
 
-func (p *Panel) Bind(ctx *Context) {
+func (p *Panel) Bind(ctx *seven_gui_circle_context.Context) {
 	p.undoBtn.SetCallback(func() {
 		if ctx.Undo() {
 			p.Update(ctx)
@@ -116,7 +118,7 @@ func (p *Panel) Bind(ctx *Context) {
 			case fltk_go.LeftMouse:
 				c := ctx.NewCircle(x, y)
 				ctx.AddCircle(c)
-				ctx.AddOp(OP_ADD, c)
+				ctx.AddOp(seven_gui_circle_context.OP_ADD, c)
 				p.Update(ctx)
 				return true
 			case fltk_go.RightMouse:
@@ -128,7 +130,7 @@ func (p *Panel) Bind(ctx *Context) {
 
 				p.adjustTips.SetLabel(fmt.Sprintf("Adjust the circle at (%d, %d)", c.X, c.Y))
 				p.adjustSlider.SetValue(float64(c.R))
-				p.adjustDlg.SetPosition(fltk_go.EventXRoot()-c.R, fltk_go.EventYRoot()-c.R-p.adjustDlg.H()-WIDGET_PADDING)
+				p.adjustDlg.SetPosition(fltk_go.EventXRoot()-c.R, fltk_go.EventYRoot()-c.R-p.adjustDlg.H()-circle_cfg.WIDGET_PADDING)
 				p.popMenu.Popup()
 			}
 		}
@@ -143,11 +145,11 @@ func (p *Panel) Bind(ctx *Context) {
 		switch e {
 		case fltk_go.SHOW:
 			ctx.UpdateCircle(c)
-			ctx.AddOp(OP_UPDATE, c)
+			ctx.AddOp(seven_gui_circle_context.OP_UPDATE, c)
 			return true
 		case fltk_go.HIDE:
 			c.R = int(p.adjustSlider.Value())
-			ctx.AddOp(OP_UPDATE, c)
+			ctx.AddOp(seven_gui_circle_context.OP_UPDATE, c)
 			ctx.UnPickCircle()
 			p.Update(ctx)
 			return true
@@ -170,7 +172,7 @@ func (p *Panel) Bind(ctx *Context) {
 	p.Update(ctx)
 }
 
-func (p *Panel) Update(ctx *Context) {
+func (p *Panel) Update(ctx *seven_gui_circle_context.Context) {
 	p.drawBox.Redraw()
 
 	if ctx.HasRedo() {

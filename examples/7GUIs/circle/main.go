@@ -1,24 +1,23 @@
 package main
 
-import "github.com/george012/fltk_go"
-
-const (
-	WIDGET_HEIGHT  = 25
-	WIDGET_PADDING = 10
-	WIDGET_WIDTH   = 100
+import (
+	"examples/7GUIs/circle/circle_cfg"
+	"examples/7GUIs/circle/seven_gui_circle_context"
+	"examples/7GUIs/circle/seven_gui_circle_panel"
+	"github.com/george012/fltk_go"
 )
 
-var ctx = NewContext()
+var ctx = seven_gui_circle_context.NewContext()
 
 func main() {
 	fltk_go.SetScheme("gtk+")
 
 	win := fltk_go.NewWindow(
-		WIDGET_WIDTH*4+WIDGET_PADDING*3,
-		WIDGET_HEIGHT*14+WIDGET_PADDING*3)
+		circle_cfg.WIDGET_WIDTH*4+circle_cfg.WIDGET_PADDING*3,
+		circle_cfg.WIDGET_HEIGHT*14+circle_cfg.WIDGET_PADDING*3)
 	win.SetLabel("Circle Drawer")
 
-	p := NewPanel(win)
+	p := seven_gui_circle_panel.NewPanel(win)
 	p.Bind(ctx)
 
 	win.End()

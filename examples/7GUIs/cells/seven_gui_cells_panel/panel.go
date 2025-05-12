@@ -1,22 +1,26 @@
-package main
+package seven_gui_cells_panel
 
 import (
+	"examples/7GUIs/cells/sven_gui_cells_context"
 	"github.com/george012/fltk_go"
 	"log"
 )
 
 type Panel struct {
 	tb         *fltk_go.TableRow
-	cellValues map[CellLoc]string
+	cellValues map[sven_gui_cells_context.CellLoc]string
 
-	editInput *fltk_go.Input // the input box to show on editing cell
-	editCell  *Cell          // current editing cell meta, nil means not editing
+	editInput *fltk_go.Input               // the input box to show on editing cell
+	editCell  *sven_gui_cells_context.Cell // current editing cell meta, nil means not editing
+	Ctx       *sven_gui_cells_context.Context
 }
 
-func NewPanel(win *fltk_go.Window, rowCount, colCount int) *Panel {
-	p := &Panel{}
+func NewPanel(win *fltk_go.Window, rowCount, colCount int, aCtx *sven_gui_cells_context.Context) *Panel {
+	p := &Panel{
+		Ctx: aCtx,
+	}
 
-	p.cellValues = make(map[CellLoc]string)
+	p.cellValues = make(map[sven_gui_cells_context.CellLoc]string)
 
 	p.tb = fltk_go.NewTableRow(0, 0, win.W(), win.H())
 	p.tb.SetRowCount(rowCount)
@@ -38,7 +42,7 @@ func NewPanel(win *fltk_go.Window, rowCount, colCount int) *Panel {
 	return p
 }
 
-func (p *Panel) Bind(ctx *Context) {
+func (p *Panel) Bind(ctx *sven_gui_cells_context.Context) {
 	for row := range ctx.Cells {
 		for col := range ctx.Cells[row] {
 			cell := ctx.Cells[row][col]
@@ -47,8 +51,8 @@ func (p *Panel) Bind(ctx *Context) {
 	}
 
 	p.tb.SetDrawCellCallback(func(tc fltk_go.TableContext, i, j, x, y, w, h int) {
-		row := CellRow(i)
-		col := CellCol(j)
+		row := sven_gui_cells_context.CellRow(i)
+		col := sven_gui_cells_context.CellCol(j)
 
 		switch tc {
 		case fltk_go.ContextRowHeader:
@@ -62,7 +66,7 @@ func (p *Panel) Bind(ctx *Context) {
 			fltk_go.SetDrawColor(fltk_go.BLACK)
 			fltk_go.Draw(col.String(), x, y, w, h, fltk_go.ALIGN_CENTER)
 		case fltk_go.ContextCell:
-			loc := CellLoc{Row: row, Col: col}
+			loc := sven_gui_cells_context.CellLoc{Row: row, Col: col}
 			if p.IsEditingAt(col, row) {
 				p.editInput.Resize(x, y, w, h)
 				return
@@ -101,18 +105,18 @@ func (p *Panel) IsEditing() bool {
 	return p.editCell != nil
 }
 
-func (p *Panel) IsEditingAt(col CellCol, row CellRow) bool {
+func (p *Panel) IsEditingAt(col sven_gui_cells_context.CellCol, row sven_gui_cells_context.CellRow) bool {
 	return p.editCell != nil && p.editCell.Loc.Col == col && p.editCell.Loc.Row == row
 }
 
-func (p *Panel) StartEditing(ctx *Context) {
+func (p *Panel) StartEditing(ctx *sven_gui_cells_context.Context) {
 	if p.IsEditing() {
 		p.DoneEditing(ctx)
 	}
 
-	row := CellRow(p.tb.CallbackRow())
-	col := CellCol(p.tb.CallbackColumn())
-	loc := CellLoc{Row: row, Col: col}
+	row := sven_gui_cells_context.CellRow(p.tb.CallbackRow())
+	col := sven_gui_cells_context.CellCol(p.tb.CallbackColumn())
+	loc := sven_gui_cells_context.CellLoc{Row: row, Col: col}
 
 	x, y, w, h, err := p.tb.FindCell(fltk_go.ContextCell, int(row), int(col))
 	if err != nil {
@@ -128,17 +132,17 @@ func (p *Panel) StartEditing(ctx *Context) {
 	p.editInput.TakeFocus()
 }
 
-func (p *Panel) DoneEditing(ctx *Context) {
+func (p *Panel) DoneEditing(ctx *sven_gui_cells_context.Context) {
 	if p.IsEditing() {
 		// log.Print("done editing")
-		p.editCell.Update(p.editInput.Value())
+		p.editCell.Update(p.editInput.Value(), p.Ctx)
 		p.ApplyChangedCells(ctx, p.editCell)
 		p.editInput.Hide()
 		p.editCell = nil
 	}
 }
 
-func (p *Panel) ApplyChangedCells(ctx *Context, changedCell *Cell) {
+func (p *Panel) ApplyChangedCells(ctx *sven_gui_cells_context.Context, changedCell *sven_gui_cells_context.Cell) {
 	scells := ctx.FindAllChangedCells(changedCell)
 	for loc, scell := range scells {
 		p.cellValues[loc] = scell.Data.Display()

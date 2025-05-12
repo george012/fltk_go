@@ -1,6 +1,10 @@
 package main
 
-import "github.com/george012/fltk_go"
+import (
+	"examples/7GUIs/cells/seven_gui_cells_panel"
+	"examples/7GUIs/cells/sven_gui_cells_context"
+	"github.com/george012/fltk_go"
+)
 
 const (
 	WIDGET_HEIGHT = 200
@@ -12,7 +16,7 @@ const (
 	MAX_COL_COUNT = 26  // A~Z
 )
 
-var ctx = NewContext(MAX_ROW_COUNT, MAX_COL_COUNT)
+var ctx = sven_gui_cells_context.NewContext(MAX_ROW_COUNT, MAX_COL_COUNT)
 
 func init() {
 	ctx.UpdateCellAtLoc("B1", "5")
@@ -37,7 +41,7 @@ func main() {
 		WIDGET_HEIGHT)
 	win.SetLabel("Cells")
 
-	p := NewPanel(win, MAX_ROW_COUNT, MAX_COL_COUNT)
+	p := seven_gui_cells_panel.NewPanel(win, MAX_ROW_COUNT, MAX_COL_COUNT, ctx)
 	p.Bind(ctx)
 
 	win.End()

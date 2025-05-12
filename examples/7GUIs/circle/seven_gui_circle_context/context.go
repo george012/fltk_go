@@ -1,4 +1,4 @@
-package main
+package seven_gui_circle_context
 
 type OpType int
 

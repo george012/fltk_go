@@ -1,4 +1,4 @@
-package main
+package sven_gui_cells_context
 
 import (
 	"errors"
@@ -39,7 +39,7 @@ func (ctx *Context) FindCell(loc CellLoc) *Cell {
 	return ctx.Cells[loc.Row][loc.Col]
 }
 
-func ParseCellData(value string) CellData {
+func ParseCellData(value string, aCtx *Context) CellData {
 	if strings.HasPrefix(value, "=") {
 		formula := value[1:]
 		matches := reSumFormula.FindStringSubmatch(formula)
@@ -65,7 +65,7 @@ func ParseCellData(value string) CellData {
 		for row := startLoc.Row; row <= endLoc.Row; row++ {
 			for col := startLoc.Col; col <= endLoc.Col; col++ {
 				loc := CellLoc{Row: row, Col: col}
-				formulaData.CalCells[loc] = ctx.FindCell(loc)
+				formulaData.CalCells[loc] = aCtx.FindCell(loc)
 			}
 		}
 		return formulaData
@@ -79,8 +79,8 @@ func ParseCellData(value string) CellData {
 	return &CellDataText{Text: value}
 }
 
-func (cell *Cell) Update(value string) {
-	cellData := ParseCellData(value)
+func (cell *Cell) Update(value string, aCtx *Context) {
+	cellData := ParseCellData(value, aCtx)
 	cell.Data = cellData
 	cell.RawValue = value
 }
@@ -119,13 +119,14 @@ func (ctx *Context) UpdateCellAtLoc(locStr string, value string) {
 	if cell == nil {
 		return
 	}
-	cell.Update(value)
+	cell.Update(value, ctx)
 }
 
 type Cell struct {
 	Loc      CellLoc
 	Data     CellData
 	RawValue string
+	Ctx      *Context
 }
 
 type CellRow int

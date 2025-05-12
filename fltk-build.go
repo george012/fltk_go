@@ -142,23 +142,6 @@ func main() {
 	if runtime.GOOS == "darwin" {
 		cmakeCmd.Args = append(cmakeCmd.Args, "-DCMAKE_OSX_DEPLOYMENT_TARGET=12.0")
 
-		//// Get the SDK path using xcrun
-		//sdkPathCmd := exec.Command("xcrun", "--sdk", "macosx", "--show-sdk-path")
-		//sdkPathOutput, err := sdkPathCmd.Output()
-		//if err != nil {
-		//	fmt.Printf("Error getting SDK path, %v\n", err)
-		//	os.Exit(1)
-		//}
-		//normalDir := "MacOSX.sdk"
-		//// 获取目录路径和最后一层目录名称
-		//dir, _ := filepath.Split(string(sdkPathOutput))
-		//// 获取父目录
-		//parentDir := filepath.Dir(dir)
-		//// 拼接新路径
-		//newPath := filepath.Join(parentDir, normalDir)
-		//sdkPath := strings.TrimSpace(string(newPath))
-		//cmakeCmd.Args = append(cmakeCmd.Args, "-DCMAKE_OSX_SYSROOT="+sdkPath)
-
 		cmakeCmd.Args = append(cmakeCmd.Args, "-DCMAKE_OSX_SYSROOT="+"/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk")
 
 		if runtime.GOARCH == "amd64" {
@@ -220,7 +203,8 @@ func main() {
 	}
 	defer cgoFile.Close()
 	fmt.Fprintf(cgoFile, "//go:build %s && %s\n\n", runtime.GOOS, runtime.GOARCH)
-	fmt.Fprintln(cgoFile, "package fltk_go\n")
+	fmt.Fprintln(cgoFile, fmt.Sprintf("package %s\n", config.ProjectName))
+
 	fmt.Fprintf(cgoFile, "// #cgo %s,%s CXXFLAGS: -std=c++11\n", runtime.GOOS, runtime.GOARCH)
 
 	if runtime.GOOS != "windows" {
