@@ -89,7 +89,7 @@ jobs:
         if: runner.os == 'Windows'
         uses: f3d-app/install-mesa-windows-action@v2
         with:
-          path: ${{github.workspace}}/mesa
+          path: ${{github.workspace}}\mesa
 
       - name: Set up MSYS2 environment
         if: runner.os == 'Windows'
@@ -104,7 +104,7 @@ jobs:
         if: runner.os == 'Windows'
         shell: bash
         run: |
-          echo "MESA_PATH=${{ github.workspace }}/mesa" >> $GITHUB_ENV
+          echo "MESA_PATH=${{ github.workspace }}\mesa" >> $GITHUB_ENV
           echo "PATH=${MESA_PATH};$PATH" >> $GITHUB_ENV
           cd ./examples
           chmod a+x ./build_example.sh
@@ -112,6 +112,7 @@ jobs:
           ./build_example.sh test
 
       - name: Upload binaries For windows
+        if: runner.os == 'Windows'
         id: upload_file_to_release_normal
         uses: george012/upload_github_release_assets_action@latest
         with:
