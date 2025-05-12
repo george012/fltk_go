@@ -55,7 +55,6 @@ To build the `FLTK` library for your platform, just run go generate from the roo
 ## 3.2. Usage Example
 [![example showcase](./examples.png)](./examples.png)
 
-
 # 4. Resources
 - [Official FLTK 1.4 Documentation](https://www.fltk.org/doc-1.4/index.html)
 - [fltk_go Documentation](https://pkg.go.dev/github.com/george012/fltk_go)
