@@ -46,7 +46,7 @@ jobs:
     needs: Release
     strategy:
       matrix:
-        os: [macos-latest, windows-2024]
+        os: [macos-latest, windows-latest]
     steps:
       - name: CheckOut
         uses: actions/checkout@v4
@@ -95,10 +95,10 @@ jobs:
           
           curl -s https://api.github.com/repos/pal1000/mesa-dist-win/releases/latest > latest_release.json
           
-          # 提取 mesa3d-25.1.0-release-mingw.7z 的下载 URL
-          ASSET_URL=$(jq -r '.assets[] | select(.name | test("mesa3d-.*-release-msvc.7z")) | .browser_download_url' latest_release.json)
+          # 提取 mesa3d-*-release-mingw64.7z 的下载 URL
+          ASSET_URL=$(jq -r '.assets[] | select(.name | test("mesa3d-*-release-mingw64.7z")) | .browser_download_url' latest_release.json)
           if [ -z "$ASSET_URL" ]; then
-            echo "Error: No mesa3d-25.1.0-release-mingw.7z asset found in latest release"
+            echo "Error: No mesa3d-*-release-mingw64.7z asset found in latest release"
             exit 1
           fi
           
