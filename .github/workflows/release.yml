@@ -122,15 +122,6 @@ jobs:
           echo "Contents of workspace:"
           ls -l "${{ github.workspace }}"
 
-      - name: Set Mesa Path
-        if: runner.os == 'Windows'
-        shell: bash
-        run: |
-          MESA_PATH="${{ github.workspace }}\mesa"
-          echo "MESA_PATH=$MESA_PATH" >> $GITHUB_ENV
-          echo "PATH=$MESA_PATH;$PATH" >> $GITHUB_ENV
-          echo "Current PATH: $PATH"
-
       - name: Set up MSYS2 environment
         if: runner.os == 'Windows'
         run: |
