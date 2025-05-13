@@ -100,7 +100,14 @@ function toBuild() {
 
 function generate_windows_package_file() {
     local DIS_FILE_PATH=$1
-
+    if [ -z "$DIS_FILE_PATH" ]; then
+      echo "Error: Output file path not provided"
+      exit 1
+    fi
+    if [ ! -f "favicon.ico" ]; then
+      echo "Error: favicon.ico not found in current directory"
+      exit 1
+    fi
     printf "#include \"winver.h\"\n\n" > ${DIS_FILE_PATH}
     printf "1 ICON \"favicon.ico\"\n\n" >> ${DIS_FILE_PATH}
     printf "VS_VERSION_INFO VERSIONINFO\n" >> ${DIS_FILE_PATH}
