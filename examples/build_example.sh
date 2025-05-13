@@ -80,6 +80,8 @@ function toBuild() {
         # Build for Windows x64
         mkdir -p ${build_path}/${RUN_MODE}/windows/amd64
 
+        magick ./resources/imgs/Icon.png -define icon:auto-resize=256,128,64,32,16 ./favicon.ico
+
         generate_windows_package_file
         file favicon.ico || echo "Failed to check favicon.ico format"
         ls -l main.rc favicon.ico || echo "main.rc or favicon.ico not found"
@@ -99,6 +101,7 @@ function toBuild() {
         rm -rf ./main.rc
         rm -rf ./main.syso
         rm -rf ./main.i
+        rm -rf ./favicon.ico
 
         package_windows_files "amd64"
     fi

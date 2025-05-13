@@ -129,8 +129,18 @@ jobs:
           choco install msys2
           refreshenv
           C:\tools\msys64\usr\bin\bash -lc "pacman -Syu --noconfirm"
-          C:\tools\msys64\usr\bin\bash -lc "pacman -S --noconfirm base-devel mingw-w64-x86_64-toolchain mingw-w64-x86_64-gcc mingw-w64-x86_64-binutils mingw-w64-x86_64-headers git mingw-w64-x86_64-cmake"
+          C:\tools\msys64\usr\bin\bash -lc "pacman -S --noconfirm base-devel mingw-w64-x86_64-toolchain mingw-w64-x86_64-gcc mingw-w64-x86_64-binutils mingw-w64-x86_64-headers git mingw-w64-x86_64-cmake mingw-w64-x86_64-imagemagick"
           echo "C:\tools\msys64\mingw64\bin;$env:PATH" | Out-File -Encoding ASCII -Append $env:GITHUB_PATH
+
+      - name: Install ImageMagick
+        if: runner.os == 'Windows'
+        shell: pwsh
+        run: |
+          if (Get-Command magick -ErrorAction SilentlyContinue) {
+            Write-Host "ImageMagick already installed"
+          } else {
+            choco install imagemagick -y
+          }
 
       - name: Build for Windows
         if: runner.os == 'Windows'
