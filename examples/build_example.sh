@@ -79,14 +79,9 @@ function toBuild() {
     elif [[ "$OS_TYPE" == "Windows" ]]; then
           # Build for Windows x64
           mkdir -p ${build_path}/${RUN_MODE}/windows/amd64
-          magick ./resources/imgs/Icon.png -strip -define icon:auto-resize=256,128,64,32,16 ./favicon.ico
-
+          magick ./resources/imgs/Icon.png -strip -depth 8 -type TrueColor -compress None -define icon:auto-resize=256,128,64,32,16 ./favicon.ico
           generate_windows_package_file
 
-          echo "cpp path: $(which cpp)"
-          cpp --version || echo "cpp version check failed"
-          cpp main.rc -o main.i || echo "cpp preprocessing failed"
-          cat main.i || echo "Failed to generate preprocessed output"
           echo "windres path: $(which windres)"
 
           # x86_64-w64-mingw32-windres -i main.rc -o main.syso -O coff
@@ -98,7 +93,6 @@ function toBuild() {
 
           rm -rf ./main.rc
           rm -rf ./main.syso
-          rm -rf ./main.i
           rm -rf ./favicon.ico
 
           package_windows_files "amd64"
