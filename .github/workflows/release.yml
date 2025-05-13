@@ -89,36 +89,21 @@ jobs:
         if: runner.os == 'Windows'
         shell: bash
         run: |
-          # 转换为 Windows 路径分隔符
           MESA_PATH=$(cygpath -w "${{ github.workspace }}/mesa")
           mkdir -p "$MESA_PATH"
-          
-          # 获取最新 release 的 assets 信息，使用认证
           curl -s -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
             -H "Accept: application/vnd.github.v3+json" \
-            https://api.github.com/repos/pal1000/mesa-dist-win/releases/latest > latest_release.json    
-
-          # 提取 mesa3d-*-release-mingw64.7z 的下载 URL
-          ASSET_URL=$(jq -r '.assets[] | select(.name | test("mesa3d-*-release-mingw64.7z")) | .browser_download_url' latest_release.json)
+            https://api.github.com/repos/pal1000/mesa-dist-win/releases/latest > latest_release.json
+          ASSET_URL=$(jq -r '.assets[] | select(.name | test("mesa3d-.*-release-mingw\\.7z")) | .browser_download_url' latest_release.json)
           if [ -z "$ASSET_URL" ]; then
-            echo "Error: No mesa3d-*-release-mingw64.7z asset found in latest release"
+            echo "Error: No mesa3d-*-release-mingw.7z asset found in latest release"
             exit 1
           fi
-          
-          # 下载最新 Mesa assets
           curl -L -o mesa.7z "$ASSET_URL"
-          
-          # 解压到 MESA_PATH
           7z x mesa.7z -o"$MESA_PATH"
-          
-          # 移动 x64 目录中的文件到 MESA_PATH
           mv "$MESA_PATH/x64/"* "$MESA_PATH/" || echo "No x64 directory found, assuming flat structure"
           rm -rf "$MESA_PATH/x64" || true
-          
-          # 验证文件
           ls -l "$MESA_PATH"
-          
-          # 设置环境变量
           echo "MESA_PATH=$MESA_PATH" >> $GITHUB_ENV
           echo "PATH=$MESA_PATH;$PATH" >> $GITHUB_ENV
           echo "GALLIUM_DRIVER=llvmpipe" >> $GITHUB_ENV
@@ -127,9 +112,10 @@ jobs:
         if: runner.os == 'Windows'
         shell: bash
         run: |
-          if [ -d "${{ github.workspace }}\mesa" ]; then
-            ls -l "${{ github.workspace }}\mesa"
-          else
+          MESA_PATH=$(cygpath -w "${{ github.workspace }}/mesa")
+          if [ -d "$MESA_PATH" ]; then
+            ls -l "$MESA_PATH"
+            else
             echo "Error: Mesa directory not found"
             exit 1
           fi
