@@ -106,8 +106,17 @@ jobs:
         run: |
           echo "MESA_PATH=${{ github.workspace }}\mesa" >> $GITHUB_ENV
           echo "PATH=${MESA_PATH};$PATH" >> $GITHUB_ENV
+          echo "Current PATH: $PATH"
+          ls -l "${{ github.workspace }}/mesa"
+          ls -l ./examples/favicon.ico || echo "favicon.ico not found in ./examples"
+          ls -l ./resources/imgs/favicon.ico || echo "favicon.ico not found in ./resources/imgs"
           cd ./examples
           chmod a+x ./build_example.sh
+          echo "Checking windres and cpp versions:"
+          which windres
+          windres --version
+          which cpp
+          cpp --version
           ./build_example.sh
           ./build_example.sh test
 

@@ -82,9 +82,10 @@ function toBuild() {
       mkdir -p ${build_path}/${RUN_MODE}/windows/amd64
 
       generate_windows_package_file
-
+      ls -l main.rc favicon.ico || echo "main.rc or favicon.ico not found"
+      cat main.rc
       # x86_64-w64-mingw32-windres -i main.rc -o main.syso -O coff
-      windres -i main.rc -o main.syso -O coff
+      windres -i main.rc -o main.syso -O coff || (echo "windres failed" && exit 1)
       CGO_LDFLAGS="-static -static-libgcc -static-libstdc++ -lglu32 -lopengl32 -lgdiplus -lole32 -luuid -lcomctl32 -lws2_32 -lmsvcrt"
 
       CC=x86_64-w64-mingw32-gcc CXX=x86_64-w64-mingw32-g++ GOOS=windows GOARCH=amd64 CGO_ENABLED=1 CGO_LDFLAGS=$CGO_LDFLAGS go build -a -trimpath -ldflags "${ld_flag_master} -H windowsgui -w -s" -o ${build_path}/${RUN_MODE}/windows/amd64/${product_name}.exe
