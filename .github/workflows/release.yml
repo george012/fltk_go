@@ -90,17 +90,18 @@ jobs:
         shell: pwsh
         run: |
           if (Test-Path "C:\ProgramData\Chocolatey\bin\choco.exe") {
-            Write-Host "Chocolatey already installed, skipping installation"
-            choco --version
+            Write-Host "Chocolatey already installed, version: $(choco --version)"
           } else {
             Set-ExecutionPolicy Bypass -Scope Process -Force
             [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072
             iex ((New-Object System.Net.WebClient).DownloadString('https://community.chocolatey.org/install.ps1'))
           }
-          # 确保 PATH 包含 Chocolatey
+          if (-not (Get-Command choco -ErrorAction SilentlyContinue)) {
+            Write-Error "Chocolatey installation failed"
+            exit 1
+          }
           $env:PATH = "C:\ProgramData\Chocolatey\bin;$env:PATH"
           echo "PATH=$env:PATH" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
-          # 导入 Chocolatey PowerShell 模块（可选）
           Import-Module $env:ChocolateyInstall\helpers\chocolateyProfile.psm1 -ErrorAction SilentlyContinue
 
       - name: Install 7z and jq
@@ -164,19 +165,20 @@ jobs:
           } else {
             choco install msys2
           }
-          refreshenv
+          $env:PATH = "C:\tools\msys64\usr\bin;C:\tools\msys64\mingw64\bin;$env:PATH"
+          echo "PATH=$env:PATH" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
           C:\tools\msys64\usr\bin\bash.exe -lc "pacman -Syu --noconfirm"
-          C:\tools\msys64\usr\bin\bash.exe -lc "pacman -S --noconfirm base-devel mingw-w64-x86_64-toolchain git mingw-w64-x86_64-cmake"
+          C:\tools\msys64\usr\bin\bash.exe -lc "pacman -S --noconfirm base-devel mingw-w64-x86_64-toolchain mingw-w64-x86_64-gcc mingw-w64-x86_64-binutils git mingw-w64-x86_64-cmake"
           echo "C:\tools\msys64\mingw64\bin;$env:PATH" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
 
       - name: Verify windres and cpp
         if: runner.os == 'Windows'
         shell: bash
         run: |
-          which windres
-          windres --version
-          which cpp
-          cpp --version || echo "cpp not found"
+          which windres || echo "windres not found"
+          windres --version || echo "windres version check failed"
+          which cpp || echo "cpp not found"
+          cpp --version || echo "cpp version check failed"
 
       - name: Build for Windows
         if: runner.os == 'Windows'
@@ -184,6 +186,8 @@ jobs:
         run: |
           cd ./examples
           chmod a+x ./build_example.sh
+          echo "Current directory: $(pwd)"
+          ls -l favicon.ico || echo "favicon.ico not found"
           ./build_example.sh
           ./build_example.sh test
 
