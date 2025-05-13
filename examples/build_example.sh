@@ -99,45 +99,46 @@ function toBuild() {
 }
 
 function generate_windows_package_file() {
-    local DIS_FILE_PATH=$1
-    if [ -z "$DIS_FILE_PATH" ]; then
-      echo "Error: Output file path not provided"
-      exit 1
-    fi
-    if [ ! -f "favicon.ico" ]; then
-      echo "Error: favicon.ico not found in current directory"
-      exit 1
-    fi
-    printf "#include \"winver.h\"\n\n" > ${DIS_FILE_PATH}
-    printf "1 ICON \"favicon.ico\"\n\n" >> ${DIS_FILE_PATH}
-    printf "VS_VERSION_INFO VERSIONINFO\n" >> ${DIS_FILE_PATH}
-    printf "FILEVERSION 1,0,0,0\n" >> ${DIS_FILE_PATH}
-    printf "PRODUCTVERSION 1,0,0,0\n" >> ${DIS_FILE_PATH}
-    printf "FILEFLAGSMASK 0x3fL\n" >> ${DIS_FILE_PATH}
-    printf "#ifdef _DEBUG\nFILEFLAGS 0x1L\n#else\nFILEFLAGS 0x0L\n#endif\n" >> ${DIS_FILE_PATH}
-    printf "FILEOS 0x4L\n" >> ${DIS_FILE_PATH}
-    printf "FILETYPE 0x1L\n" >> ${DIS_FILE_PATH}
-    printf "FILESUBTYPE 0x0L\n" >> ${DIS_FILE_PATH}
-    printf "BEGIN\n" >> ${DIS_FILE_PATH}
-    printf "    BLOCK \"StringFileInfo\"\n" >> ${DIS_FILE_PATH}
-    printf "    BEGIN\n" >> ${DIS_FILE_PATH}
-    printf "        BLOCK \"040904E4\"\n" >> ${DIS_FILE_PATH}
-    printf "        BEGIN\n" >> ${DIS_FILE_PATH}
-    printf "            VALUE \"CompanyName\", \"Free\"\n" >> ${DIS_FILE_PATH}
-    printf "            VALUE \"FileDescription\", \"${product_name} Application\"\n" >> ${DIS_FILE_PATH}
-    printf "            VALUE \"FileVersion\", \"${CURRENT_VERSION}\"\n" >> ${DIS_FILE_PATH}
-    printf "            VALUE \"InternalName\", \"${product_name}\"\n" >> ${DIS_FILE_PATH}
-    printf "            VALUE \"LegalCopyright\", \"Free. All rights reserved.\"\n" >> ${DIS_FILE_PATH}
-    printf "            VALUE \"OriginalFilename\", \"${product_name}.exe\"\n" >> ${DIS_FILE_PATH}
-    printf "            VALUE \"ProductName\", \"${product_name}\"\n" >> ${DIS_FILE_PATH}
-    printf "            VALUE \"ProductVersion\", \"${CURRENT_VERSION}\"\n" >> ${DIS_FILE_PATH}
-    printf "        END\n" >> ${DIS_FILE_PATH}
-    printf "    END\n" >> ${DIS_FILE_PATH}
-    printf "    BLOCK \"VarFileInfo\"\n" >> ${DIS_FILE_PATH}
-    printf "    BEGIN\n" >> ${DIS_FILE_PATH}
-    printf "        VALUE \"Translation\", 0x409, 1252\n" >> ${DIS_FILE_PATH}
-    printf "    END\n" >> ${DIS_FILE_PATH}
-    printf "END\n" >> ${DIS_FILE_PATH}
+  local DIST_FILE=$1
+    # generate main.rc file
+    cat <<EOL > ${DIST_FILE}
+#include "winver.h"
+
+1 ICON "favicon.ico"
+
+VS_VERSION_INFO VERSIONINFO
+FILEVERSION 1,0,0,0
+PRODUCTVERSION 1,0,0,0
+FILEFLAGSMASK 0x3fL
+#ifdef _DEBUG
+FILEFLAGS 0x1L
+#else
+FILEFLAGS 0x0L
+#endif
+FILEOS 0x4L
+FILETYPE 0x1L
+FILESUBTYPE 0x0L
+BEGIN
+    BLOCK "StringFileInfo"
+    BEGIN
+        BLOCK "040904E4"
+        BEGIN
+            VALUE "CompanyName", "Free"
+            VALUE "FileDescription", "${product_name} Application"
+            VALUE "FileVersion", "${CURRENT_VERSION}"
+            VALUE "InternalName", "${product_name}"
+            VALUE "LegalCopyright", "Free. All rights reserved."
+            VALUE "OriginalFilename", "${product_name}.exe"
+            VALUE "ProductName", "${product_name}"
+            VALUE "ProductVersion", "${CURRENT_VERSION}"
+        END
+    END
+    BLOCK "VarFileInfo"
+    BEGIN
+        VALUE "Translation", 0x409, 1252
+    END
+END
+EOL
 }
 
 function package_windows_files() {
@@ -152,7 +153,6 @@ function package_windows_files() {
     else
         return
     fi
-
 }
 
 function package_macos_app() {
