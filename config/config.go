@@ -2,5 +2,5 @@ package config
 
 const (
 	ProjectName    = "fltk_go"
-	ProjectVersion = "v0.0.36"
+	ProjectVersion = "v0.0.37"
 )
