@@ -87,42 +87,9 @@ jobs:
 
       - name: Install Mesa For Windows
         if: runner.os == 'Windows'
-        uses: f3d-app/install-mesa-windows-action@v2
+        uses: f3d-app/install-mesa-windows-action@v1
         with:
-          path: ${{ github.workspace }}/mesa
-
-      - name: Verify Mesa Installation
-        if: runner.os == 'Windows'
-        shell: bash
-        run: |
-          if [ -d "${{ github.workspace }}/mesa" ]; then
-            ls -l "${{ github.workspace }}/mesa"
-          else
-            echo "Error: Mesa directory not found"
-            exit 1
-          fi
-          echo "Contents of workspace:"
-          ls -l "${{ github.workspace }}"
-
-      - name: Check favicon.ico
-        if: runner.os == 'Windows'
-        shell: bash
-        run: |
-          if [ -f "./resources/imgs/favicon.ico" ]; then
-            ls -l ./resources/imgs/favicon.ico
-          else
-            echo "Error: favicon.ico not found in ./resources/imgs"
-            exit 1
-          fi
-
-      - name: Set Mesa Path
-        if: runner.os == 'Windows'
-        shell: bash
-        run: |
-          MESA_PATH="${{ github.workspace }}/mesa"
-          echo "MESA_PATH=$MESA_PATH" >> $GITHUB_ENV
-          echo "PATH=$MESA_PATH;$PATH" >> $GITHUB_ENV
-          echo "Current PATH: $PATH"
+          path: ${{github.workspace}}/mesa
 
       - name: Set up MSYS2 environment
         if: runner.os == 'Windows'
@@ -130,29 +97,21 @@ jobs:
           choco install msys2
           refreshenv
           C:\tools\msys64\usr\bin\bash -lc "pacman -Syu --noconfirm"
-          C:\tools\msys64\usr\bin\bash -lc "pacman -S --noconfirm base-devel mingw-w64-x86_64-toolchain mingw-w64-x86_64-gcc mingw-w64-x86_64-binutils mingw-w64-x86_64-cmake"
+          C:\tools\msys64\usr\bin\bash -lc "pacman -S --noconfirm base-devel mingw-w64-x86_64-toolchain git mingw-w64-x86_64-cmake"
           echo "C:\tools\msys64\mingw64\bin;$env:PATH" | Out-File -Encoding ASCII -Append $env:GITHUB_PATH
-
-      - name: Verify windres and cpp
-        if: runner.os == 'Windows'
-        shell: bash
-        run: |
-          which windres
-          windres --version
-          which cpp
-          cpp --version || echo "cpp not found"
 
       - name: Build for Windows
         if: runner.os == 'Windows'
         shell: bash
         run: |
+          echo "MESA_PATH=${{ github.workspace }}/mesa" >> $GITHUB_ENV
+          echo "PATH=${MESA_PATH};$PATH" >> $GITHUB_ENV
           cd ./examples
           chmod a+x ./build_example.sh
           ./build_example.sh
           ./build_example.sh test
 
       - name: Upload binaries For windows
-        if: runner.os == 'Windows'
         id: upload_file_to_release_normal
         uses: george012/upload_github_release_assets_action@latest
         with:
