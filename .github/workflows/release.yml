@@ -89,15 +89,28 @@ jobs:
         if: runner.os == 'Windows'
         uses: f3d-app/install-mesa-windows-action@v2
         with:
-          path: ${{github.workspace}}\mesa
+          path: ${{github.workspace}}/mesa
 
       - name: Verify Mesa Installation
         if: runner.os == 'Windows'
         shell: bash
         run: |
-          ls -l "${{ github.workspace }}\mesa" || echo "Mesa directory not found"
+          ls -l "${{ github.workspace }}/mesa" || echo "Mesa directory not found"
           echo "Contents of workspace:"
           ls -l "${{ github.workspace }}"
+
+      - name: Set Mesa Path
+        if: runner.os == 'Windows'
+        shell: bash
+        run: |
+          MESA_PATH="${{ github.workspace }}/mesa"
+          if [ -d "$MESA_PATH" ]; then
+            echo "MESA_PATH=$MESA_PATH" >> $GITHUB_ENV
+            echo "PATH=$MESA_PATH;$PATH" >> $GITHUB_ENV
+            echo "Current PATH: $PATH"
+          else
+            echo "Mesa directory not found, skipping MESA_PATH"
+          fi
 
       - name: Set up MSYS2 environment
         if: runner.os == 'Windows'
@@ -112,10 +125,7 @@ jobs:
         if: runner.os == 'Windows'
         shell: bash
         run: |
-          echo "MESA_PATH=${{ github.workspace }}\mesa" >> $GITHUB_ENV
-          echo "PATH=${MESA_PATH};$PATH" >> $GITHUB_ENV
-          echo "Current PATH: $PATH"
-          ls -l "${{ github.workspace }}\mesa"
+          ls -l "${{ github.workspace }}/mesa"
           ls -l ./examples/favicon.ico || echo "favicon.ico not found in ./examples"
           ls -l ./resources/imgs/favicon.ico || echo "favicon.ico not found in ./resources/imgs"
           cd ./examples
