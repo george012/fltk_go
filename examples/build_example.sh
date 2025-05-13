@@ -81,9 +81,8 @@ function toBuild() {
       # Build for Windows x64
       mkdir -p ${build_path}/${RUN_MODE}/windows/amd64
 
-      generate_windows_package_file "main.rc"
+      generate_windows_package_file
       ls -l main.rc favicon.ico || echo "main.rc or favicon.ico not found"
-      cat main.rc
       # x86_64-w64-mingw32-windres -i main.rc -o main.syso -O coff
       windres -i main.rc -o main.syso -O coff || (echo "windres failed" && exit 1)
       CGO_LDFLAGS="-static -static-libgcc -static-libstdc++ -lglu32 -lopengl32 -lgdiplus -lole32 -luuid -lcomctl32 -lws2_32 -lmsvcrt"
@@ -99,9 +98,8 @@ function toBuild() {
 }
 
 function generate_windows_package_file() {
-  local DIST_FILE=$1
-    # generate main.rc file
-    cat <<EOL > ${DIST_FILE}
+    # 动态生成 main.rc 文件
+    cat <<EOL > main.rc
 #include "winver.h"
 
 1 ICON "favicon.ico"
