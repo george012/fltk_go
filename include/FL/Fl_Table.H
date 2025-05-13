@@ -24,7 +24,7 @@
 
 // EXPERIMENTAL
 // We use either std::vector or the private class Fl_Int_Vector
-// depending on the build option OPTION_USE_STD or --enable-use_std.
+// depending on the build option FLTK_OPTION_STD or --enable-use_std.
 // This option allows to use std::string and std::vector in FLTK 1.4.x
 
 #if (FLTK_USE_STD)
@@ -351,7 +351,7 @@ protected:
                fl_push_clip(X, Y, W, H);
                {
                    // BG COLOR
-                   fl_color( row_selected(R) ? selection_color() : FL_WHITE);
+                   fl_color(is_selected(R, C) ? selection_color() : FL_WHITE);
                    fl_rectf(X, Y, W, H);
 
                    // TEXT
