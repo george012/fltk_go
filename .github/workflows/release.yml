@@ -125,16 +125,17 @@ jobs:
 
       - name: Verify Mesa Installation
         if: runner.os == 'Windows'
+        shell: pwsh
         run: |
-          MESA_PATH=$(cygpath -w "${{ github.workspace }}/mesa")
-          if [ -d "$MESA_PATH" ]; then
-            ls -l "$MESA_PATH"
-          else
-            echo "Error: Mesa directory not found"
+          $MESA_PATH = "${{ github.workspace }}\mesa" -replace '/', '\'
+          if (Test-Path $MESA_PATH) {
+            Get-ChildItem -Path $MESA_PATH
+          } else {
+            Write-Error "Error: Mesa directory not found"
             exit 1
-          fi
-          echo "Contents of workspace:"
-          ls -l "${{ github.workspace }}"
+          }
+          Write-Host "Contents of workspace:"
+          Get-ChildItem -Path "${{ github.workspace }}"
 
       - name: Set up MSYS2 environment
         if: runner.os == 'Windows'
@@ -144,15 +145,6 @@ jobs:
           C:\tools\msys64\usr\bin\bash -lc "pacman -Syu --noconfirm"
           C:\tools\msys64\usr\bin\bash -lc "pacman -S --noconfirm base-devel mingw-w64-x86_64-toolchain git mingw-w64-x86_64-cmake"
           echo "C:\tools\msys64\mingw64\bin;$env:PATH" | Out-File -Encoding ASCII -Append $env:GITHUB_PATH
-
-      - name: Verify windres and cpp
-        if: runner.os == 'Windows'
-        shell: bash
-        run: |
-          which windres || echo "windres not found"
-          windres --version || echo "windres version check failed"
-          which cpp || echo "cpp not found"
-          cpp --version || echo "cpp version check failed"
 
       - name: Build for Windows
         if: runner.os == 'Windows'
