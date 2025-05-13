@@ -1,10 +1,4 @@
-# This workflow will build a golang project
-# For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-go
-
-name: Go build
-
-env:
-  ProductName: fltk_go
+name: Release_Build
 
 on:
   push:
@@ -13,7 +7,7 @@ on:
   workflow_dispatch:
 
 jobs:
-  Release:
+  release:
     runs-on: ubuntu-latest
     outputs:
       UPLOAD_URL: ${{ steps.stepCreateRelease.outputs.upload_url }}
@@ -23,7 +17,7 @@ jobs:
 
       - name: Get latest tag
         run: |
-          echo "LATEST_TAG=$(git tag | grep -v '^latest$' | sort -V | tail -n1)" >> ${GITHUB_ENV}
+          echo "LATEST_TAG=$(git tag | grep -v '^latest$' | sort -V | tail -n1)" >> $GITHUB_ENV
 
       - name: Bump version and push tag
         id: tag-version
@@ -41,9 +35,9 @@ jobs:
           tag: ${{ env.LATEST_TAG }}
           name: ${{ env.LATEST_TAG }}
 
-  BuildExampleProject:
+  Build:
     runs-on: ${{ matrix.os }}
-    needs: Release
+    needs: release
     strategy:
       matrix:
         os: [macos-latest, windows-latest]
@@ -70,7 +64,7 @@ jobs:
         with:
           go-version: '>=1.18.0'
 
-      - name: build for macOS GUI
+      - name: build for macOS GUI and Linux agent
         if: runner.os == 'macOS'
         run: |
           brew install FiloSottile/musl-cross/musl-cross
@@ -80,55 +74,23 @@ jobs:
           echo "PATH=${MUSL_CROSS_ROOT}/bin:$PATH" >> $GITHUB_ENV
           echo "MINGW_ROOT=$(brew --prefix mingw-w64)" >> $GITHUB_ENV
           echo "PATH=${MINGW_ROOT}/bin:$PATH" >> $GITHUB_ENV
-          cd ./examples
-          chmod a+x ./build_example.sh
-          ./build_example.sh
-          ./build_example.sh test
+          chmod a+x ./build.sh
+          ./build.sh
+          ./build.sh test
 
       - name: Install Mesa For Windows
         if: runner.os == 'Windows'
-        shell: pwsh
-        run: |
-          $MESA_PATH = "${{ github.workspace }}\mesa"
-          New-Item -ItemType Directory -Path $MESA_PATH -Force | Out-Null
-          $release = Invoke-RestMethod -Uri "https://api.github.com/repos/pal1000/mesa-dist-win/releases/latest" -Headers @{ Authorization = "Bearer ${{ secrets.GITHUB_TOKEN }}"; Accept = "application/vnd.github.v3+json" }
-          $ASSET_URL = $release.assets | Where-Object { $_.name -match "mesa3d-.*-release-mingw\.7z" } | Select-Object -ExpandProperty browser_download_url
-          if (-not $ASSET_URL) {
-            Write-Error "Error: No mesa3d-*-release-mingw.7z asset found"
-            exit 1
-          }
-          Invoke-WebRequest -Uri $ASSET_URL -OutFile "mesa.7z"
-          7z x mesa.7z -o"$MESA_PATH"
-          if (Test-Path "$MESA_PATH\x64") {
-            Move-Item "$MESA_PATH\x64\*" "$MESA_PATH" -Force
-            Remove-Item "$MESA_PATH\x64" -Recurse -Force
-          }
-          Get-ChildItem $MESA_PATH
-          echo "MESA_PATH=$MESA_PATH" | Out-File $Env:GITHUB_ENV -Append -Encoding utf8
-          echo "PATH=$MESA_PATH;$Env:PATH" | Out-File $Env:GITHUB_ENV -Append -Encoding utf8
-          echo "GALLIUM_DRIVER=llvmpipe" | Out-File $Env:GITHUB_ENV -Append -Encoding utf8
-
-      - name: Verify Mesa Installation
-        if: runner.os == 'Windows'
-        shell: pwsh
-        run: |
-          $MESA_PATH = "${{ github.workspace }}\mesa"
-          if (-not (Test-Path $MESA_PATH)) {
-            Write-Error "Error: Mesa directory not found"
-            exit 1
-          }
-          Write-Host "Mesa contents:"
-          Get-ChildItem $MESA_PATH
-          Write-Host "Workspace contents:"
-          Get-ChildItem "${{ github.workspace }}"
+        uses: f3d-app/install-mesa-windows-action@v1
+        with:
+          path: ${{github.workspace}}/mesa
 
       - name: Set up MSYS2 environment
         if: runner.os == 'Windows'
-        shell: pwsh
         run: |
           choco install msys2
-          C:\tools\msys64\usr\bin\bash.exe -lc "pacman -Syu --noconfirm"
-          C:\tools\msys64\usr\bin\bash.exe -lc "pacman -S --noconfirm base-devel mingw-w64-x86_64-toolchain mingw-w64-x86_64-gcc mingw-w64-x86_64-binutils mingw-w64-x86_64-headers git mingw-w64-x86_64-cmake mingw-w64-x86_64-imagemagick"
+          refreshenv
+          C:\tools\msys64\usr\bin\bash -lc "pacman -Syu --noconfirm"
+          C:\tools\msys64\usr\bin\bash -lc "pacman -S --noconfirm base-devel mingw-w64-x86_64-toolchain git mingw-w64-x86_64-cmake mingw-w64-x86_64-imagemagick"
           echo "C:\tools\msys64\mingw64\bin;$env:PATH" | Out-File -Encoding ASCII -Append $env:GITHUB_PATH
 
       - name: Build for Windows
@@ -137,21 +99,17 @@ jobs:
         run: |
           echo "MESA_PATH=${{ github.workspace }}/mesa" >> $GITHUB_ENV
           echo "PATH=${MESA_PATH};$PATH" >> $GITHUB_ENV
-          cd ./examples
-          chmod a+x ./build_example.sh
-          file favicon.ico || echo "Failed to check favicon.ico format"
-          ls -l favicon.ico || echo "favicon.ico not found"
-          ./build_example.sh
-          ./build_example.sh test
+          chmod a+x ./build.sh
+          ./build.sh
+          ./build.sh test
 
-      - name: Upload binaries For windows
-        if: runner.os == 'Windows'
+      - name: Upload examples binaries Linux and windows
         id: upload_file_to_release_normal
         uses: george012/upload_github_release_assets_action@latest
         with:
           path: ./examples/build/upload_tmp_dir/*.zip
 
-      - name: Upload binaries For Mac
+      - name: Upload examples binaries For Mac
         id: upload_file_to_release_mac
         if: runner.os == 'MacOS'
         uses: george012/upload_github_release_assets_action@latest
@@ -160,7 +118,7 @@ jobs:
 
   RemoveOldRelease:
     runs-on: ubuntu-latest
-    needs: BuildExampleProject
+    needs: Build
     steps:
       - name: install github-cli
         run: |
@@ -216,4 +174,4 @@ jobs:
           gh release delete ${{ env.APP_OLD_VERSION }} -y
           git push origin --delete ${{ env.APP_OLD_VERSION }}
         env:
-          GH_TOKEN: ${{ github.token }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}

@@ -9,6 +9,9 @@ build_path=./build
 RUN_MODE=release
 UPLOAD_TMP_DIR=upload_tmp_dir
 
+extend_name_agent=""
+
+
 OS_TYPE="Unknown"
 GetOSType() {
     uNames=$(uname -s)
@@ -24,6 +27,16 @@ GetOSType() {
     fi
 }
 GetOSType
+
+function getLibVersion() {
+    local lib=$1
+    version=$(grep "${lib}" go.mod | awk '{print $2}')
+    if [ -z "$version" ]; then
+        echo "Version not found for ${lib} in go.mod!"
+        exit 1
+    fi
+    echo "$version"
+}
 
 function toBuild() {
     rm -rf ${build_path}/${RUN_MODE}
@@ -51,7 +64,7 @@ function toBuild() {
         mkdir -p ${build_path}/${RUN_MODE}/darwin/arm64
         mkdir -p ${build_path}/${RUN_MODE}/darwin/universal
 
-        # handle images
+        # 处理图标文件
         create_mac_resource
 
         # Build for macOS x64
@@ -65,7 +78,7 @@ function toBuild() {
         chmod a+x "${build_path}/${RUN_MODE}/darwin/arm64/${product_name}"
 #        package_macos_app "${build_path}/${RUN_MODE}/darwin/arm64" "arm64"
 
-        # merge binary files
+        # 合并二进制文件
         echo "merge ${product_name} darwin amd64 and arm64 to universal"
         lipo -create -output ${build_path}/${RUN_MODE}/darwin/universal/${product_name} ${build_path}/${RUN_MODE}/darwin/amd64/${product_name} ${build_path}/${RUN_MODE}/darwin/arm64/${product_name}
         chmod a+x ${build_path}/${RUN_MODE}/darwin/universal/${product_name}
@@ -76,6 +89,17 @@ function toBuild() {
         rm -rf ${build_path}/${RUN_MODE}/darwin/amd64
         rm -rf ${build_path}/${RUN_MODE}/darwin/AppIcon.icns
 
+        if [[ -n "$extend_name_agent" ]]; then
+            echo "build ${product_name}_${extend_name_agent}"
+            CC=x86_64-linux-musl-gcc GOARCH=amd64 GOOS=linux CGO_ENABLED=1 CGO_LDFLAGS="-static" go build -o ${build_path}/${RUN_MODE}/${product_name}_${extend_name_agent}/${product_name}_${extend_name_agent} -trimpath -ldflags "${ld_flag_master}" ./${product_name}_${extend_name_agent}/${product_name}_${extend_name_agent}.go \
+            && chmod a+x ${build_path}/${RUN_MODE}/${product_name}_${extend_name_agent}/${product_name}_${extend_name_agent} \
+            && cp ./example_files/${product_name}_${extend_name_agent}.service ${build_path}/${RUN_MODE}/${product_name}_${extend_name_agent} \
+            && cp ./example_files/install_${product_name}_${extend_name_agent}.sh ${build_path}/${RUN_MODE}/${product_name}_${extend_name_agent} \
+            && mkdir -p ${build_path}/${RUN_MODE}/${product_name}_${extend_name_agent}/conf \
+            && cp ./example_files/config_${extend_name_agent}.example.json ${build_path}/${RUN_MODE}/${product_name}_${extend_name_agent}/conf/config_${extend_name_agent}.json
+
+            package_linux_binary_files
+        fi
     elif [[ "$OS_TYPE" == "Windows" ]]; then
         # Build for Windows x64
         mkdir -p ${build_path}/${RUN_MODE}/windows/amd64
@@ -83,18 +107,33 @@ function toBuild() {
         magick ./resources/imgs/Icon.png -strip -depth 8 -type TrueColor -compress None -define icon:auto-resize=256,128,64,32,16 ./favicon.ico
 
         generate_windows_package_file
-        file favicon.ico || echo "Failed to check favicon.ico format"
-        ls -l main.rc favicon.ico || echo "main.rc or favicon.ico not found"
-        echo "windres path: $(which windres)"
-        windres -DWINAPI_FAMILY=WINAPI_FAMILY_DESKTOP_APP -I /c/tools/msys64/mingw64/x86_64-w64-mingw32/include -i main.rc -o main.syso -O coff || (echo "windres failed"; cat main.rc; exit 1)
+
+        windres -i main.rc -o main.syso -O coff
         CGO_LDFLAGS="-static -static-libgcc -static-libstdc++ -lglu32 -lopengl32 -lgdiplus -lole32 -luuid -lcomctl32 -lws2_32 -lmsvcrt"
+
         CC=x86_64-w64-mingw32-gcc CXX=x86_64-w64-mingw32-g++ GOOS=windows GOARCH=amd64 CGO_ENABLED=1 CGO_LDFLAGS=$CGO_LDFLAGS go build -a -trimpath -ldflags "${ld_flag_master} -H windowsgui -w -s" -o ${build_path}/${RUN_MODE}/windows/amd64/${product_name}.exe
         chmod a+x ${build_path}/${RUN_MODE}/windows/amd64/${product_name}.exe
+
         rm -rf ./main.rc
         rm -rf ./main.syso
+
         package_windows_files "amd64"
     fi
 }
+
+function package_linux_binary_files(){
+
+    local BUILD_OS_TYPE=$(echo "$OS_TYPE" | tr '[:upper:]' '[:lower:]')
+
+    cd ${build_path}/${RUN_MODE} \
+    && echo "package ${product_name}_${extend_name_agent}" \
+    && zip -r ./${product_name}_${extend_name_agent}_${RUN_MODE}_${CURRENT_VERSION}_linux_amd64.zip ./${product_name}_${extend_name_agent} \
+    && mkdir -p ../${UPLOAD_TMP_DIR} \
+    && mv *.zip ../${UPLOAD_TMP_DIR} \
+    && cd ../../ \
+    && echo current dir with $PWD
+}
+
 
 function generate_windows_package_file() {
     # 动态生成 main.rc 文件
@@ -144,12 +183,14 @@ function package_windows_files() {
         cd ${build_path}/${RUN_MODE}/windows/amd64
         mkdir -p ${product_name}
         mv ${product_name}.exe ./${product_name}/
+#        zip -r ./${product_name}_${RUN_MODE}_${CURRENT_VERSION}_linux_amd64.zip ./${product_name}
         7z a ./${product_name}_${RUN_MODE}_${CURRENT_VERSION}_windows_amd64.zip ./${product_name} >/dev/null 2>&1
         mv ./${product_name}_${RUN_MODE}_${CURRENT_VERSION}_windows_amd64.zip ../../../${UPLOAD_TMP_DIR}
         cd ../../../../
     else
         return
     fi
+
 }
 
 function package_macos_app() {
@@ -164,10 +205,10 @@ function package_macos_app() {
     mkdir -p ${macos_dir}
     mkdir -p ${resources_dir}
 
-    # move binary file to MacOS Dir
+    # 将可执行文件移动到MacOS目录
     mv "${build_dir}/${product_name}" ${macos_dir}/
 
-    # create Info.plist file
+    # 创建Info.plist文件
     cat > ${contents_dir}/Info.plist <<EOL
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE plist PUBLIC "-//Apple Computer//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
@@ -193,18 +234,18 @@ function package_macos_app() {
 </plist>
 EOL
 
-    # move config file to Resources Dir
+    # 将配置文件移动到Resources目录
     if [ -d "${build_path}/${RUN_MODE}/conf" ]; then
         mv "${build_path}/${RUN_MODE}/conf" ${resources_dir}/
     fi
 
 
-    # Make .app file
+    # 创建最终的.app包
     cd ${build_dir}
     echo "---------current path $(pwd)-----------"
     cp ../AppIcon.icns ./${product_name}.app/Contents/Resources/AppIcon.icns
 
-    # package app to DMG file
+    # 打包成 DMG
     create-dmg \
       --volname "${product_name}_${RUN_MODE}_${CURRENT_VERSION}_darwin_${arch}_Installer" \
       --volicon "../AppIcon.icns" \
@@ -245,7 +286,7 @@ function create_mac_resource() {
     rm -rf ${app_icons}
 }
 
-function handleRunMode() {
+function handlerunMode() {
     if [[ "$1" == "release" || "$1" == "" ]]; then
         RUN_MODE=release
     elif [[ "$1" == "test" ]]; then
@@ -258,4 +299,4 @@ function handleRunMode() {
     fi
 }
 
-handleRunMode "$1" && toBuild
+handlerunMode "$1" && toBuild
