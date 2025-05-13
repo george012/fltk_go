@@ -85,43 +85,8 @@ jobs:
           ./build_example.sh
           ./build_example.sh test
 
-      - name: Install Chocolatey
-        if: runner.os == 'Windows'
-        shell: pwsh
-        run: |
-          if (Test-Path "C:\ProgramData\Chocolatey\bin\choco.exe") {
-            Write-Host "Chocolatey already installed, version: $(choco --version)"
-          } else {
-            Set-ExecutionPolicy Bypass -Scope Process -Force
-            [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072
-            iex ((New-Object System.Net.WebClient).DownloadString('https://community.chocolatey.org/install.ps1'))
-          }
-          if (-not (Get-Command choco -ErrorAction SilentlyContinue)) {
-            Write-Error "Chocolatey installation failed"
-            exit 1
-          }
-          $env:PATH = "C:\ProgramData\Chocolatey\bin;$env:PATH"
-          echo "PATH=$env:PATH" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
-          Import-Module $env:ChocolateyInstall\helpers\chocolateyProfile.psm1 -ErrorAction SilentlyContinue
-
-      - name: Install 7z and jq
-        if: runner.os == 'Windows'
-        shell: pwsh
-        run: |
-          if (Get-Command 7z -ErrorAction SilentlyContinue) {
-            Write-Host "7z already installed"
-          } else {
-            choco install 7zip
-          }
-          if (Get-Command jq -ErrorAction SilentlyContinue) {
-            Write-Host "jq already installed"
-          } else {
-            choco install jq
-          }
-
       - name: Install Mesa For Windows
         if: runner.os == 'Windows'
-        shell: bash
         run: |
           MESA_PATH=$(cygpath -w "${{ github.workspace }}/mesa")
           mkdir -p "$MESA_PATH"
@@ -144,7 +109,6 @@ jobs:
 
       - name: Verify Mesa Installation
         if: runner.os == 'Windows'
-        shell: bash
         run: |
           MESA_PATH=$(cygpath -w "${{ github.workspace }}/mesa")
           if [ -d "$MESA_PATH" ]; then
@@ -158,20 +122,12 @@ jobs:
 
       - name: Set up MSYS2 environment
         if: runner.os == 'Windows'
-        shell: bash
         run: |
-          if [ -f "C:/tools/msys64/usr/bin/bash.exe" ]; then
-            echo "MSYS2 already installed at C:/tools/msys64"
-          else
-            choco install msys2
-          fi
-          if [ ! -f "C:/tools/msys64/usr/bin/bash.exe" ]; then
-            echo "Error: MSYS2 bash.exe not found"
-            exit 1
-          fi
-          C:/tools/msys64/usr/bin/bash -lc "pacman -Syu --noconfirm"
-          C:/tools/msys64/usr/bin/bash -lc "pacman -S --noconfirm base-devel mingw-w64-x86_64-toolchain mingw-w64-x86_64-gcc mingw-w64-x86_64-binutils git mingw-w64-x86_64-cmake"
-          echo "C:\tools\msys64\mingw64\bin:$PATH" >> $GITHUB_PATH
+          choco install msys2
+          refreshenv
+          C:\tools\msys64\usr\bin\bash -lc "pacman -Syu --noconfirm"
+          C:\tools\msys64\usr\bin\bash -lc "pacman -S --noconfirm base-devel mingw-w64-x86_64-toolchain git mingw-w64-x86_64-cmake"
+          echo "C:\tools\msys64\mingw64\bin;$env:PATH" | Out-File -Encoding ASCII -Append $env:GITHUB_PATH
 
       - name: Verify windres and cpp
         if: runner.os == 'Windows'
@@ -188,8 +144,6 @@ jobs:
         run: |
           cd ./examples
           chmod a+x ./build_example.sh
-          echo "Current directory: $(pwd)"
-          ls -l favicon.ico || echo "favicon.ico not found"
           ./build_example.sh
           ./build_example.sh test
 
