@@ -266,7 +266,7 @@ func main() {
 		// Hardcoding contents of cgo directive for windows,
 		// as we cannot extract it from fltk-config if we're not using a UNIX shell.
 		fmt.Fprintf(cgoFile, "// #cgo %s,%s CPPFLAGS: -I${SRCDIR}/%s -I${SRCDIR}/include -I${SRCDIR}/include/FL/images -D_LARGEFILE_SOURCE -D_LARGEFILE64_SOURCE -D_FILE_OFFSET_BITS=64\n", runtime.GOOS, runtime.GOARCH, libdir)
-		fmt.Fprintf(cgoFile, "// #cgo %s,%s LDFLAGS: -mwindows ${SRCDIR}/%s/libfltk_images.a ${SRCDIR}/%s/libfltk_jpeg.a ${SRCDIR}/%s/libfltk_png.a ${SRCDIR}/%s/libfltk_z.a ${SRCDIR}/%s/libfltk_gl.a -lglu32 -lopengl32 ${SRCDIR}/%s/libfltk_forms.a ${SRCDIR}/%s/libfltk.a -lgdiplus -lole32 -luuid -lcomctl32 -lws2_32\n", runtime.GOOS, runtime.GOARCH, libdir, libdir, libdir, libdir, libdir, libdir, libdir)
+		fmt.Fprintf(cgoFile, "// #cgo %s,%s LDFLAGS: -mwindows ${SRCDIR}/%s/libfltk_images.a ${SRCDIR}/%s/libfltk_jpeg.a ${SRCDIR}/%s/libfltk_png.a ${SRCDIR}/%s/libfltk_z.a ${SRCDIR}/%s/libfltk_gl.a -lglu32 -lopengl32 ${SRCDIR}/%s/libfltk_forms.a ${SRCDIR}/%s/libfltk.a -lgdiplus -lole32 -luuid -lcomctl32 -lws2_32 -lwinspool\n", runtime.GOOS, runtime.GOARCH, libdir, libdir, libdir, libdir, libdir, libdir, libdir)
 	}
 	fmt.Fprintln(cgoFile, "import \"C\"")
 
