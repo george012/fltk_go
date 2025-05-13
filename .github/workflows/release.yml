@@ -74,6 +74,7 @@ jobs:
           echo "PATH=${MUSL_CROSS_ROOT}/bin:$PATH" >> $GITHUB_ENV
           echo "MINGW_ROOT=$(brew --prefix mingw-w64)" >> $GITHUB_ENV
           echo "PATH=${MINGW_ROOT}/bin:$PATH" >> $GITHUB_ENV
+          cd ./examples
           chmod a+x ./build_example.sh
           ./build_example.sh
           ./build_example.sh test
@@ -99,6 +100,7 @@ jobs:
         run: |
           echo "MESA_PATH=${{ github.workspace }}/mesa" >> $GITHUB_ENV
           echo "PATH=${MESA_PATH};$PATH" >> $GITHUB_ENV
+          cd ./examples
           chmod a+x ./build_example.sh
           ./build_example.sh
           ./build_example.sh test
