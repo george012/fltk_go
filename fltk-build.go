@@ -209,7 +209,6 @@ func main() {
 	fmt.Fprintln(cgoFile, fmt.Sprintf("package %s\n", config.ProjectName))
 
 	fmt.Fprintf(cgoFile, "// #cgo %s,%s CXXFLAGS: -std=c++11\n", runtime.GOOS, runtime.GOARCH)
-
 	if runtime.GOOS != "windows" {
 		fltkConfigPath := filepath.Join("fltk_build", "build", "bin", "fltk-config")
 		fltkConfigStat, err := os.Stat(fltkConfigPath)
@@ -235,7 +234,9 @@ func main() {
 		if runtime.GOOS == "openbsd" {
 			fltkConfigCxxFlags = "-I/usr/X11R6/include " + fltkConfigCxxFlags
 		}
-		fmt.Fprintf(cgoFile, "// #cgo %s,%s CPPFLAGS: -I${SRCDIR}/%s %s", runtime.GOOS, runtime.GOARCH, libdir, fltkConfigCxxFlags)
+
+		additionalCppFlags := "-I${SRCDIR}/include/png -I${SRCDIR}/include/zlib -I${SRCDIR}/include/jpeg"
+		fmt.Fprintf(cgoFile, "// #cgo %s,%s CPPFLAGS: -I${SRCDIR}/%s %s %s", runtime.GOOS, runtime.GOARCH, libdir, additionalCppFlags, fltkConfigCxxFlags)
 		if fltkConfigCxxFlags[len(fltkConfigCxxFlags)-1] != '\n' {
 			fmt.Fprintln(cgoFile, "")
 		}
@@ -247,6 +248,10 @@ func main() {
 			os.Exit(1)
 		}
 		fltkConfigLdFlags := strings.ReplaceAll(string(ldOutput), currentDir, "${SRCDIR}")
+
+		if runtime.GOOS == "darwin" {
+			fltkConfigLdFlags = strings.ReplaceAll(fltkConfigLdFlags, "-weak_framework UniformTypeIdentifiers", "-framework UniformTypeIdentifiers")
+		}
 		if runtime.GOOS == "openbsd" {
 			fltkConfigLdFlags = "-L/usr/X11R6/lib " + fltkConfigLdFlags
 		}
@@ -260,7 +265,7 @@ func main() {
 		libdir := filepath.ToSlash(libdir)
 		// Hardcoding contents of cgo directive for windows,
 		// as we cannot extract it from fltk-config if we're not using a UNIX shell.
-		fmt.Fprintf(cgoFile, "// #cgo %s,%s CPPFLAGS: -I${SRCDIR}/%s -I${SRCDIR}/include -I${SRCDIR}/include/FL/images -D_LARGEFILE_SOURCE -D_LARGEFILE64_SOURCE -D_FILE_OFFSET_BITS=64\n", runtime.GOOS, runtime.GOARCH, libdir)
+		fmt.Fprintf(cgoFile, "// #cgo %s,%s CPPFLAGS: -I${SRCDIR}/%s -I${SRCDIR}/include -I${SRCDIR}/include/FL/images I${SRCDIR}/include/png -I${SRCDIR}/include/zlib -I${SRCDIR}/include/jpeg -D_LARGEFILE_SOURCE -D_LARGEFILE64_SOURCE -D_FILE_OFFSET_BITS=64\n", runtime.GOOS, runtime.GOARCH, libdir)
 		fmt.Fprintf(cgoFile, "// #cgo %s,%s LDFLAGS: -mwindows ${SRCDIR}/%s/libfltk_images.a ${SRCDIR}/%s/libfltk_jpeg.a ${SRCDIR}/%s/libfltk_png.a ${SRCDIR}/%s/libfltk_z.a ${SRCDIR}/%s/libfltk_gl.a -lglu32 -lopengl32 ${SRCDIR}/%s/libfltk_forms.a ${SRCDIR}/%s/libfltk.a -lgdiplus -lole32 -luuid -lcomctl32 -lws2_32\n", runtime.GOOS, runtime.GOARCH, libdir, libdir, libdir, libdir, libdir, libdir, libdir)
 	}
 	fmt.Fprintln(cgoFile, "import \"C\"")
