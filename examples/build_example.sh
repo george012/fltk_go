@@ -81,7 +81,7 @@ function toBuild() {
       # Build for Windows x64
       mkdir -p ${build_path}/${RUN_MODE}/windows/amd64
 
-      generate_windows_package_file
+      generate_windows_package_file "main.rc"
       ls -l main.rc favicon.ico || echo "main.rc or favicon.ico not found"
       cat main.rc
       # x86_64-w64-mingw32-windres -i main.rc -o main.syso -O coff
@@ -99,45 +99,38 @@ function toBuild() {
 }
 
 function generate_windows_package_file() {
-    # generate main.rc file
-    cat <<EOL > main.rc
-#include "winver.h"
+    local DIS_FILE_PATH=$1
 
-1 ICON "favicon.ico"
-
-VS_VERSION_INFO VERSIONINFO
-FILEVERSION 1,0,0,0
-PRODUCTVERSION 1,0,0,0
-FILEFLAGSMASK 0x3fL
-#ifdef _DEBUG
-FILEFLAGS 0x1L
-#else
-FILEFLAGS 0x0L
-#endif
-FILEOS 0x4L
-FILETYPE 0x1L
-FILESUBTYPE 0x0L
-BEGIN
-    BLOCK "StringFileInfo"
-    BEGIN
-        BLOCK "040904E4"
-        BEGIN
-            VALUE "CompanyName", "Free"
-            VALUE "FileDescription", "${product_name} Application"
-            VALUE "FileVersion", "${CURRENT_VERSION}"
-            VALUE "InternalName", "${product_name}"
-            VALUE "LegalCopyright", "Free. All rights reserved."
-            VALUE "OriginalFilename", "${product_name}.exe"
-            VALUE "ProductName", "${product_name}"
-            VALUE "ProductVersion", "${CURRENT_VERSION}"
-        END
-    END
-    BLOCK "VarFileInfo"
-    BEGIN
-        VALUE "Translation", 0x409, 1252
-    END
-END
-EOL
+    printf "#include \"winver.h\"\n\n" > ${DIS_FILE_PATH}
+    printf "1 ICON \"favicon.ico\"\n\n" >> ${DIS_FILE_PATH}
+    printf "VS_VERSION_INFO VERSIONINFO\n" >> ${DIS_FILE_PATH}
+    printf "FILEVERSION 1,0,0,0\n" >> ${DIS_FILE_PATH}
+    printf "PRODUCTVERSION 1,0,0,0\n" >> ${DIS_FILE_PATH}
+    printf "FILEFLAGSMASK 0x3fL\n" >> ${DIS_FILE_PATH}
+    printf "#ifdef _DEBUG\nFILEFLAGS 0x1L\n#else\nFILEFLAGS 0x0L\n#endif\n" >> ${DIS_FILE_PATH}
+    printf "FILEOS 0x4L\n" >> ${DIS_FILE_PATH}
+    printf "FILETYPE 0x1L\n" >> ${DIS_FILE_PATH}
+    printf "FILESUBTYPE 0x0L\n" >> ${DIS_FILE_PATH}
+    printf "BEGIN\n" >> ${DIS_FILE_PATH}
+    printf "    BLOCK \"StringFileInfo\"\n" >> ${DIS_FILE_PATH}
+    printf "    BEGIN\n" >> ${DIS_FILE_PATH}
+    printf "        BLOCK \"040904E4\"\n" >> ${DIS_FILE_PATH}
+    printf "        BEGIN\n" >> ${DIS_FILE_PATH}
+    printf "            VALUE \"CompanyName\", \"Free\"\n" >> ${DIS_FILE_PATH}
+    printf "            VALUE \"FileDescription\", \"${product_name} Application\"\n" >> ${DIS_FILE_PATH}
+    printf "            VALUE \"FileVersion\", \"${CURRENT_VERSION}\"\n" >> ${DIS_FILE_PATH}
+    printf "            VALUE \"InternalName\", \"${product_name}\"\n" >> ${DIS_FILE_PATH}
+    printf "            VALUE \"LegalCopyright\", \"Free. All rights reserved.\"\n" >> ${DIS_FILE_PATH}
+    printf "            VALUE \"OriginalFilename\", \"${product_name}.exe\"\n" >> ${DIS_FILE_PATH}
+    printf "            VALUE \"ProductName\", \"${product_name}\"\n" >> ${DIS_FILE_PATH}
+    printf "            VALUE \"ProductVersion\", \"${CURRENT_VERSION}\"\n" >> ${DIS_FILE_PATH}
+    printf "        END\n" >> ${DIS_FILE_PATH}
+    printf "    END\n" >> ${DIS_FILE_PATH}
+    printf "    BLOCK \"VarFileInfo\"\n" >> ${DIS_FILE_PATH}
+    printf "    BEGIN\n" >> ${DIS_FILE_PATH}
+    printf "        VALUE \"Translation\", 0x409, 1252\n" >> ${DIS_FILE_PATH}
+    printf "    END\n" >> ${DIS_FILE_PATH}
+    printf "END\n" >> ${DIS_FILE_PATH}
 }
 
 function package_windows_files() {

@@ -46,7 +46,7 @@ jobs:
     needs: Release
     strategy:
       matrix:
-        os: [macos-latest, windows-2022]
+        os: [macos-latest, windows-2024]
     steps:
       - name: CheckOut
         uses: actions/checkout@v4
@@ -87,16 +87,45 @@ jobs:
 
       - name: Install Mesa For Windows
         if: runner.os == 'Windows'
-        uses: f3d-app/install-mesa-windows-action@v1
-        with:
-          path: ${{github.workspace}}/mesa
+        shell: bash
+        run: |
+          # 转换为 Windows 路径分隔符
+          MESA_PATH=$(cygpath -w "${{ github.workspace }}/mesa")
+          mkdir -p "$MESA_PATH"
+          
+          curl -s https://api.github.com/repos/pal1000/mesa-dist-win/releases/latest > latest_release.json
+          
+          # 提取 mesa3d-25.1.0-release-mingw.7z 的下载 URL
+          ASSET_URL=$(jq -r '.assets[] | select(.name | test("mesa3d-.*-release-msvc.7z")) | .browser_download_url' latest_release.json)
+          if [ -z "$ASSET_URL" ]; then
+            echo "Error: No mesa3d-25.1.0-release-mingw.7z asset found in latest release"
+            exit 1
+          fi
+          
+          # 下载最新 Mesa assets
+          curl -L -o mesa.7z "$ASSET_URL"
+          
+          # 解压到 MESA_PATH
+          7z x mesa.7z -o"$MESA_PATH"
+          
+          # 移动 x64 目录中的文件到 MESA_PATH
+          mv "$MESA_PATH/x64/"* "$MESA_PATH/" || echo "No x64 directory found, assuming flat structure"
+          rm -rf "$MESA_PATH/x64" || true
+          
+          # 验证文件
+          ls -l "$MESA_PATH"
+          
+          # 设置环境变量
+          echo "MESA_PATH=$MESA_PATH" >> $GITHUB_ENV
+          echo "PATH=$MESA_PATH;$PATH" >> $GITHUB_ENV
+          echo "GALLIUM_DRIVER=llvmpipe" >> $GITHUB_ENV
 
       - name: Verify Mesa Installation
         if: runner.os == 'Windows'
         shell: bash
         run: |
-          if [ -d "${{ github.workspace }}/mesa" ]; then
-            ls -l "${{ github.workspace }}/mesa"
+          if [ -d "${{ github.workspace }}\mesa" ]; then
+            ls -l "${{ github.workspace }}\mesa"
           else
             echo "Error: Mesa directory not found"
             exit 1
@@ -108,7 +137,7 @@ jobs:
         if: runner.os == 'Windows'
         shell: bash
         run: |
-          MESA_PATH="${{ github.workspace }}/mesa"
+          MESA_PATH="${{ github.workspace }}\mesa"
           echo "MESA_PATH=$MESA_PATH" >> $GITHUB_ENV
           echo "PATH=$MESA_PATH;$PATH" >> $GITHUB_ENV
           echo "Current PATH: $PATH"
