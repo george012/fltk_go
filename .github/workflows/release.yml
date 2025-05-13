@@ -87,11 +87,13 @@ jobs:
 
       - name: Set up MSYS2 environment
         if: runner.os == 'Windows'
+        shell: pwsh
         run: |
           choco install msys2
-          refreshenv
-          C:\tools\msys64\usr\bin\bash -lc "pacman -Syu --noconfirm"
-          C:\tools\msys64\usr\bin\bash -lc "pacman -S --noconfirm base-devel mingw-w64-x86_64-toolchain git mingw-w64-x86_64-cmake mingw-w64-x86_64-imagemagick"
+          C:\tools\msys64\usr\bin\bash.exe -lc "pacman -Syu --noconfirm"
+          C:\tools\msys64\usr\bin\bash.exe -lc "pacman -S --noconfirm base-devel mingw-w64-x86_64-headers mingw-w64-x86_64-crt git mingw-w64-x86_64-cmake"
+          C:\tools\msys64\usr\bin\bash.exe -lc "curl -O https://repo.msys2.org/mingw/mingw64/mingw-w64-x86_64-binutils-2.42-2-any.pkg.tar.zst && pacman -U --noconfirm mingw-w64-x86_64-binutils-2.42-2-any.pkg.tar.zst"
+          C:\tools\msys64\usr\bin\bash.exe -lc "curl -O https://repo.msys2.org/mingw/mingw64/mingw-w64-x86_64-gcc-14.1.0-3-any.pkg.tar.zst && pacman -U --noconfirm mingw-w64-x86_64-gcc-14.1.0-3-any.pkg.tar.zst"
           echo "C:\tools\msys64\mingw64\bin;$env:PATH" | Out-File -Encoding ASCII -Append $env:GITHUB_PATH
 
       - name: Build for Windows
