@@ -77,23 +77,30 @@ function toBuild() {
         rm -rf ${build_path}/${RUN_MODE}/darwin/AppIcon.icns
 
     elif [[ "$OS_TYPE" == "Windows" ]]; then
+        # Build for Windows x64
+        mkdir -p ${build_path}/${RUN_MODE}/windows/amd64
 
-      # Build for Windows x64
-      mkdir -p ${build_path}/${RUN_MODE}/windows/amd64
+        generate_windows_package_file
+        file favicon.ico || echo "Failed to check favicon.ico format"
+        ls -l main.rc favicon.ico || echo "main.rc or favicon.ico not found"
 
-      generate_windows_package_file
-      ls -l main.rc favicon.ico || echo "main.rc or favicon.ico not found"
-      # x86_64-w64-mingw32-windres -i main.rc -o main.syso -O coff
-      windres -i main.rc -o main.syso -O coff || (echo "windres failed" && exit 1)
-      CGO_LDFLAGS="-static -static-libgcc -static-libstdc++ -lglu32 -lopengl32 -lgdiplus -lole32 -luuid -lcomctl32 -lws2_32 -lmsvcrt"
+        echo "cpp path: $(which x86_64-w64-mingw32-cpp)"
+        x86_64-w64-mingw32-cpp --version || echo "cpp version check failed"
+        x86_64-w64-mingw32-cpp main.rc -o main.i || echo "cpp preprocessing failed"
+        cat main.i || echo "Failed to generate preprocessed output"
+        echo "windres path: $(which windres)"
+        find /c/tools/msys64/mingw64 -name winver.h || echo "winver.h not found"
+        windres -I /c/tools/msys64/mingw64/x86_64-w64-mingw32/include -i main.rc -o main.syso -O coff || (echo "windres failed"; cat main.rc; exit 1)
+        CGO_LDFLAGS="-static -static-libgcc -static-libstdc++ -lglu32 -lopengl32 -lgdiplus -lole32 -luuid -lcomctl32 -lws2_32 -lmsvcrt"
 
-      CC=x86_64-w64-mingw32-gcc CXX=x86_64-w64-mingw32-g++ GOOS=windows GOARCH=amd64 CGO_ENABLED=1 CGO_LDFLAGS=$CGO_LDFLAGS go build -a -trimpath -ldflags "${ld_flag_master} -H windowsgui -w -s" -o ${build_path}/${RUN_MODE}/windows/amd64/${product_name}.exe
-      chmod a+x ${build_path}/${RUN_MODE}/windows/amd64/${product_name}.exe
+        CC=x86_64-w64-mingw32-gcc CXX=x86_64-w64-mingw32-g++ GOOS=windows GOARCH=amd64 CGO_ENABLED=1 CGO_LDFLAGS=$CGO_LDFLAGS go build -a -trimpath -ldflags "${ld_flag_master} -H windowsgui -w -s" -o ${build_path}/${RUN_MODE}/windows/amd64/${product_name}.exe
+        chmod a+x ${build_path}/${RUN_MODE}/windows/amd64/${product_name}.exe
 
-      rm -rf ./main.rc
-      rm -rf ./main.syso
+        rm -rf ./main.rc
+        rm -rf ./main.syso
+        rm -rf ./main.i
 
-      package_windows_files "amd64"
+        package_windows_files "amd64"
     fi
 }
 
