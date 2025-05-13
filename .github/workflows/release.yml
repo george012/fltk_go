@@ -89,56 +89,42 @@ jobs:
         if: runner.os == 'Windows'
         shell: pwsh
         run: |
-          # Convert workspace path to Windows format
-          $MESA_PATH = "${{ github.workspace }}\mesa" -replace '/', '\'
-          # Create directory
+          $MESA_PATH = "${{ github.workspace }}\mesa"
           New-Item -ItemType Directory -Path $MESA_PATH -Force | Out-Null
-          # Download latest release JSON
-          $headers = @{
-            "Authorization" = "Bearer ${{ secrets.GITHUB_TOKEN }}"
-            "Accept" = "application/vnd.github.v3+json"
-          }
-          Invoke-WebRequest -Uri "https://api.github.com/repos/pal1000/mesa-dist-win/releases/latest" -Headers $headers -OutFile "latest_release.json"
-          # Parse JSON to get asset URL
-          $ASSET_URL = jq -r '.assets[] | select(.name | test("mesa3d-.*-release-mingw\\.7z")) | .browser_download_url' latest_release.json
+          $release = Invoke-RestMethod -Uri "https://api.github.com/repos/pal1000/mesa-dist-win/releases/latest" -Headers @{ Authorization = "Bearer ${{ secrets.GITHUB_TOKEN }}"; Accept = "application/vnd.github.v3+json" }
+          $ASSET_URL = $release.assets | Where-Object { $_.name -match "mesa3d-.*-release-mingw\.7z" } | Select-Object -ExpandProperty browser_download_url
           if (-not $ASSET_URL) {
-            Write-Error "Error: No mesa3d-*-release-mingw.7z asset found in latest release"
+            Write-Error "Error: No mesa3d-*-release-mingw.7z asset found"
             exit 1
           }
-          # Download mesa.7z
           Invoke-WebRequest -Uri $ASSET_URL -OutFile "mesa.7z"
-          # Extract mesa.7z
           7z x mesa.7z -o"$MESA_PATH"
-          # Move x64 contents to MESA_PATH root
           if (Test-Path "$MESA_PATH\x64") {
-            Move-Item -Path "$MESA_PATH\x64\*" -Destination "$MESA_PATH" -Force
-            Remove-Item -Path "$MESA_PATH\x64" -Recurse -Force
-          } else {
-            Write-Host "No x64 directory found, assuming flat structure"
+            Move-Item "$MESA_PATH\x64\*" "$MESA_PATH" -Force
+            Remove-Item "$MESA_PATH\x64" -Recurse -Force
           }
-          # List directory contents
-          Get-ChildItem -Path $MESA_PATH
-          # Set environment variables
-          echo "MESA_PATH=$MESA_PATH" | Out-File -FilePath $Env:GITHUB_ENV -Append -Encoding utf8
-          echo "PATH=$MESA_PATH;$Env:PATH" | Out-File -FilePath $Env:GITHUB_ENV -Append -Encoding utf8
-          echo "GALLIUM_DRIVER=llvmpipe" | Out-File -FilePath $Env:GITHUB_ENV -Append -Encoding utf8
+          Get-ChildItem $MESA_PATH
+          echo "MESA_PATH=$MESA_PATH" | Out-File $Env:GITHUB_ENV -Append -Encoding utf8
+          echo "PATH=$MESA_PATH;$Env:PATH" | Out-File $Env:GITHUB_ENV -Append -Encoding utf8
+          echo "GALLIUM_DRIVER=llvmpipe" | Out-File $Env:GITHUB_ENV -Append -Encoding utf8
 
       - name: Verify Mesa Installation
         if: runner.os == 'Windows'
         shell: pwsh
         run: |
-          $MESA_PATH = "${{ github.workspace }}\mesa" -replace '/', '\'
-          if (Test-Path $MESA_PATH) {
-            Get-ChildItem -Path $MESA_PATH
-          } else {
+          $MESA_PATH = "${{ github.workspace }}\mesa"
+          if (-not (Test-Path $MESA_PATH)) {
             Write-Error "Error: Mesa directory not found"
             exit 1
           }
-          Write-Host "Contents of workspace:"
-          Get-ChildItem -Path "${{ github.workspace }}"
+          Write-Host "Mesa contents:"
+          Get-ChildItem $MESA_PATH
+          Write-Host "Workspace contents:"
+          Get-ChildItem "${{ github.workspace }}"
 
       - name: Set up MSYS2 environment
         if: runner.os == 'Windows'
+        shell: pwsh
         run: |
           choco install msys2
           refreshenv
@@ -150,6 +136,8 @@ jobs:
         if: runner.os == 'Windows'
         shell: bash
         run: |
+          echo "MESA_PATH=${{ github.workspace }}/mesa" >> $GITHUB_ENV
+          echo "PATH=${MESA_PATH};$PATH" >> $GITHUB_ENV
           cd ./examples
           chmod a+x ./build_example.sh
           ./build_example.sh
