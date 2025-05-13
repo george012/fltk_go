@@ -129,7 +129,7 @@ jobs:
           choco install msys2
           refreshenv
           C:\tools\msys64\usr\bin\bash -lc "pacman -Syu --noconfirm"
-          C:\tools\msys64\usr\bin\bash -lc "pacman -S --noconfirm base-devel mingw-w64-x86_64-toolchain mingw-w64-x86_64-gcc mingw-w64-x86_64-cpp mingw-w64-x86_64-binutils mingw-w64-x86_64-headers git mingw-w64-x86_64-cmake"
+          C:\tools\msys64\usr\bin\bash -lc "pacman -S --noconfirm base-devel mingw-w64-x86_64-toolchain mingw-w64-x86_64-gcc mingw-w64-x86_64-binutils mingw-w64-x86_64-headers git mingw-w64-x86_64-cmake"
           echo "C:\tools\msys64\mingw64\bin;$env:PATH" | Out-File -Encoding ASCII -Append $env:GITHUB_PATH
 
       - name: Build for Windows
