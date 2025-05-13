@@ -165,6 +165,10 @@ jobs:
           else
             choco install msys2
           fi
+          if [ ! -f "C:/tools/msys64/usr/bin/bash.exe" ]; then
+            echo "Error: MSYS2 bash.exe not found"
+            exit 1
+          fi
           C:/tools/msys64/usr/bin/bash -lc "pacman -Syu --noconfirm"
           C:/tools/msys64/usr/bin/bash -lc "pacman -S --noconfirm base-devel mingw-w64-x86_64-toolchain mingw-w64-x86_64-gcc mingw-w64-x86_64-binutils git mingw-w64-x86_64-cmake"
           echo "C:\tools\msys64\mingw64\bin:$PATH" >> $GITHUB_PATH
