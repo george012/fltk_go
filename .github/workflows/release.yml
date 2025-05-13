@@ -91,6 +91,14 @@ jobs:
         with:
           path: ${{github.workspace}}\mesa
 
+      - name: Verify Mesa Installation
+        if: runner.os == 'Windows'
+        shell: bash
+        run: |
+          ls -l "${{ github.workspace }}\mesa" || echo "Mesa directory not found"
+          echo "Contents of workspace:"
+          ls -l "${{ github.workspace }}"
+
       - name: Set up MSYS2 environment
         if: runner.os == 'Windows'
         run: |
@@ -107,7 +115,7 @@ jobs:
           echo "MESA_PATH=${{ github.workspace }}\mesa" >> $GITHUB_ENV
           echo "PATH=${MESA_PATH};$PATH" >> $GITHUB_ENV
           echo "Current PATH: $PATH"
-          ls -l "${{ github.workspace }}/mesa"
+          ls -l "${{ github.workspace }}\mesa"
           ls -l ./examples/favicon.ico || echo "favicon.ico not found in ./examples"
           ls -l ./resources/imgs/favicon.ico || echo "favicon.ico not found in ./resources/imgs"
           cd ./examples
