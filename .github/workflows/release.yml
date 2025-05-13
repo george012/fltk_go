@@ -74,9 +74,9 @@ jobs:
           echo "PATH=${MUSL_CROSS_ROOT}/bin:$PATH" >> $GITHUB_ENV
           echo "MINGW_ROOT=$(brew --prefix mingw-w64)" >> $GITHUB_ENV
           echo "PATH=${MINGW_ROOT}/bin:$PATH" >> $GITHUB_ENV
-          chmod a+x ./build.sh
-          ./build.sh
-          ./build.sh test
+          chmod a+x ./build_example.sh
+          ./build_example.sh
+          ./build_example.sh test
 
       - name: Install Mesa For Windows
         if: runner.os == 'Windows'
@@ -99,9 +99,9 @@ jobs:
         run: |
           echo "MESA_PATH=${{ github.workspace }}/mesa" >> $GITHUB_ENV
           echo "PATH=${MESA_PATH};$PATH" >> $GITHUB_ENV
-          chmod a+x ./build.sh
-          ./build.sh
-          ./build.sh test
+          chmod a+x ./build_example.sh
+          ./build_example.sh
+          ./build_example.sh test
 
       - name: Upload examples binaries Linux and windows
         id: upload_file_to_release_normal
