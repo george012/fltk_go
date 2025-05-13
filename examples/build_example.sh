@@ -111,9 +111,10 @@ function toBuild() {
         fi
         generate_windows_package_file
 
-        windres -i main.rc -o main.syso -O coff
-        CGO_LDFLAGS="-static -static-libgcc -static-libstdc++ -lglu32 -lopengl32 -lgdiplus -lole32 -luuid -lcomctl32 -lws2_32 -lmsvcrt"
+#        windres -i main.rc -o main.syso -O coff
+        windres -DWINAPI_FAMILY=WINAPI_FAMILY_DESKTOP_APP -I /c/tools/msys64/mingw64/x86_64-w64-mingw32/include -i main.rc -o main.syso -O coff || (echo "windres failed"; cat main.rc; exit 1)
 
+        CGO_LDFLAGS="-static -static-libgcc -static-libstdc++ -lmsvcrt -lglu32 -lopengl32 -lgdiplus -lole32 -luuid -lcomctl32 -lws2_32"
         CC=x86_64-w64-mingw32-gcc CXX=x86_64-w64-mingw32-g++ GOOS=windows GOARCH=amd64 CGO_ENABLED=1 CGO_LDFLAGS=$CGO_LDFLAGS go build -a -trimpath -ldflags "${ld_flag_master} -H windowsgui -w -s" -o ${build_path}/${RUN_MODE}/windows/amd64/${product_name}.exe
         chmod a+x ${build_path}/${RUN_MODE}/windows/amd64/${product_name}.exe
 
