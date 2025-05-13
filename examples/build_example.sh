@@ -104,6 +104,8 @@ function toBuild() {
         # Build for Windows x64
         mkdir -p ${build_path}/${RUN_MODE}/windows/amd64
 
+        echo "current dir wiht:"$PWD
+
         if [ ! -f ./favicon.ico ]; then
           magick ./resources/imgs/Icon.png -strip -depth 8 -type TrueColor -compress None -define icon:auto-resize=256,128,64,32,16 ./favicon.ico
         fi
