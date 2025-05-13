@@ -87,25 +87,41 @@ jobs:
 
       - name: Install Mesa For Windows
         if: runner.os == 'Windows'
+        shell: pwsh
         run: |
-          MESA_PATH=$(cygpath -w "${{ github.workspace }}/mesa")
-          mkdir -p "$MESA_PATH"
-          curl -s -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
-            -H "Accept: application/vnd.github.v3+json" \
-            https://api.github.com/repos/pal1000/mesa-dist-win/releases/latest > latest_release.json
-          ASSET_URL=$(jq -r '.assets[] | select(.name | test("mesa3d-.*-release-mingw\\.7z")) | .browser_download_url' latest_release.json)
-          if [ -z "$ASSET_URL" ]; then
-            echo "Error: No mesa3d-*-release-mingw.7z asset found in latest release"
+          # Convert workspace path to Windows format
+          $MESA_PATH = "${{ github.workspace }}\mesa" -replace '/', '\'
+          # Create directory
+          New-Item -ItemType Directory -Path $MESA_PATH -Force | Out-Null
+          # Download latest release JSON
+          $headers = @{
+            "Authorization" = "Bearer ${{ secrets.GITHUB_TOKEN }}"
+            "Accept" = "application/vnd.github.v3+json"
+          }
+          Invoke-WebRequest -Uri "https://api.github.com/repos/pal1000/mesa-dist-win/releases/latest" -Headers $headers -OutFile "latest_release.json"
+          # Parse JSON to get asset URL
+          $ASSET_URL = jq -r '.assets[] | select(.name | test("mesa3d-.*-release-mingw\\.7z")) | .browser_download_url' latest_release.json
+          if (-not $ASSET_URL) {
+            Write-Error "Error: No mesa3d-*-release-mingw.7z asset found in latest release"
             exit 1
-          fi
-          curl -L -o mesa.7z "$ASSET_URL"
+          }
+          # Download mesa.7z
+          Invoke-WebRequest -Uri $ASSET_URL -OutFile "mesa.7z"
+          # Extract mesa.7z
           7z x mesa.7z -o"$MESA_PATH"
-          mv "$MESA_PATH/x64/"* "$MESA_PATH/" || echo "No x64 directory found, assuming flat structure"
-          rm -rf "$MESA_PATH/x64" || true
-          ls -l "$MESA_PATH"
-          echo "MESA_PATH=$MESA_PATH" >> $GITHUB_ENV
-          echo "PATH=$MESA_PATH;$PATH" >> $GITHUB_ENV
-          echo "GALLIUM_DRIVER=llvmpipe" >> $GITHUB_ENV
+          # Move x64 contents to MESA_PATH root
+          if (Test-Path "$MESA_PATH\x64") {
+            Move-Item -Path "$MESA_PATH\x64\*" -Destination "$MESA_PATH" -Force
+            Remove-Item -Path "$MESA_PATH\x64" -Recurse -Force
+          } else {
+            Write-Host "No x64 directory found, assuming flat structure"
+          }
+          # List directory contents
+          Get-ChildItem -Path $MESA_PATH
+          # Set environment variables
+          echo "MESA_PATH=$MESA_PATH" | Out-File -FilePath $Env:GITHUB_ENV -Append -Encoding utf8
+          echo "PATH=$MESA_PATH;$Env:PATH" | Out-File -FilePath $Env:GITHUB_ENV -Append -Encoding utf8
+          echo "GALLIUM_DRIVER=llvmpipe" | Out-File -FilePath $Env:GITHUB_ENV -Append -Encoding utf8
 
       - name: Verify Mesa Installation
         if: runner.os == 'Windows'
