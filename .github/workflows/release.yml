@@ -85,6 +85,21 @@ jobs:
           ./build_example.sh
           ./build_example.sh test
 
+      - name: Install Chocolatey
+        if: runner.os == 'Windows'
+        shell: pwsh
+        run: |
+          Set-ExecutionPolicy Bypass -Scope Process -Force
+          [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072
+          iex ((New-Object System.Net.WebClient).DownloadString('https://community.chocolatey.org/install.ps1'))
+          refreshenv
+
+      - name: Install 7z and jq
+        if: runner.os == 'Windows'
+        run: |
+          choco install 7zip
+          choco install jq
+
       - name: Install Mesa For Windows
         if: runner.os == 'Windows'
         shell: bash
