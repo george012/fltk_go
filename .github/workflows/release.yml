@@ -158,18 +158,13 @@ jobs:
 
       - name: Set up MSYS2 environment
         if: runner.os == 'Windows'
-        shell: pwsh
+        shell: bash
         run: |
-          if (Get-Command msys2 -ErrorAction SilentlyContinue) {
-            Write-Host "MSYS2 already installed"
-          } else {
-            choco install msys2
-          }
-          $env:PATH = "C:\tools\msys64\usr\bin;C:\tools\msys64\mingw64\bin;$env:PATH"
-          echo "PATH=$env:PATH" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
-          C:\tools\msys64\usr\bin\bash.exe -lc "pacman -Syu --noconfirm"
-          C:\tools\msys64\usr\bin\bash.exe -lc "pacman -S --noconfirm base-devel mingw-w64-x86_64-toolchain mingw-w64-x86_64-gcc mingw-w64-x86_64-binutils git mingw-w64-x86_64-cmake"
-          echo "C:\tools\msys64\mingw64\bin;$env:PATH" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
+          choco install msys2
+          refreshenv
+          C:\tools\msys64\usr\bin\bash -lc "pacman -Syu --noconfirm"
+          C:\tools\msys64\usr\bin\bash -lc "pacman -S --noconfirm base-devel mingw-w64-x86_64-toolchain git mingw-w64-x86_64-cmake"
+          echo "C:\tools\msys64\mingw64\bin;$env:PATH" | Out-File -Encoding ASCII -Append $env:GITHUB_PATH
 
       - name: Verify windres and cpp
         if: runner.os == 'Windows'
