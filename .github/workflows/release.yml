@@ -46,7 +46,7 @@ jobs:
     needs: Release
     strategy:
       matrix:
-        os: [macos-latest, windows-2022]
+        os: [macos-latest, windows-latest]
     steps:
       - name: CheckOut
         uses: actions/checkout@v4
