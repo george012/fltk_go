@@ -85,9 +85,7 @@ jobs:
         run: |
           $MESA_PATH = "${{ github.workspace }}\mesa"
           New-Item -ItemType Directory -Path $MESA_PATH -Force | Out-Null
-          # 安装 tree 命令
           choco install tree -y
-          # 动态下载最新 Mesa 运行时包
           $release = Invoke-RestMethod -Uri "https://api.github.com/repos/pal1000/mesa-dist-win/releases/latest" -Headers @{ Accept = "application/vnd.github.v3+json" }
           $ASSET_URL = $release.assets | Where-Object { $_.name -match "mesa3d-.*-release-msvc\.7z" -and $_.name -notmatch "devel" } | Select-Object -First 1 -ExpandProperty browser_download_url
           if (-not $ASSET_URL) {
@@ -97,17 +95,14 @@ jobs:
           Write-Host "Downloading: $ASSET_URL"
           Invoke-WebRequest -Uri $ASSET_URL -OutFile "mesa.7z"
           7z x mesa.7z -o"$MESA_PATH"
-          # 显示目录结构
           Write-Host "Mesa directory structure:"
           tree $MESA_PATH
-          # 查找 opengl32.dll
           $DLL_PATH = Get-ChildItem -Path $MESA_PATH -Recurse -Filter "opengl32.dll" | Where-Object { $_.DirectoryName -match "x64" } | Select-Object -First 1 -ExpandProperty DirectoryName
           if (-not $DLL_PATH) {
             Write-Error "Error: opengl32.dll not found in x64 directory under $MESA_PATH"
             exit 1
           }
           Write-Host "Found opengl32.dll in: $DLL_PATH"
-          # 设置环境变量
           $env:LIBGL_DRIVERS_PATH = $DLL_PATH
           $env:GALLIUM_DRIVER = "llvmpipe"
           $env:PATH = "$DLL_PATH;" + $env:PATH
@@ -123,7 +118,7 @@ jobs:
           refreshenv
           C:\tools\msys64\usr\bin\bash -lc "pacman -Syu --noconfirm"
           C:\tools\msys64\usr\bin\bash -lc "pacman -S --noconfirm base-devel mingw-w64-x86_64-toolchain git mingw-w64-x86_64-cmake mingw-w64-x86_64-imagemagick"
-          echo "C:\tools\msys64\mingw64\bin;$env:PATH" | Out-File -Encoding ASCII -Append $env:GITHUB_PATH
+          echo "C:\tools\msys64\mingw64\bin" | Out-File -Encoding ASCII -Append $env:GITHUB_PATH
 
       - name: Build for Windows
         if: runner.os == 'Windows'
@@ -131,8 +126,13 @@ jobs:
         run: |
           cd ./examples
           chmod a+x ./build_example.sh
-          ./build_example.sh
-          ./build_example.sh test
+          echo "PATH: $PATH"
+          which gcc
+          gcc --version
+          gcc -print-file-name=opengl32.dll
+          ./build_example.sh || { echo "Build failed"; cat windres.log magick.log; exit 1; }
+          ./build_example.sh test || { echo "Test build failed"; cat windres.log magick.log; exit 1; }
+          ls -l ./build/upload_tmp_dir/
 
       - name: Upload examples binaries Linux and windows
         id: upload_file_to_release_normal

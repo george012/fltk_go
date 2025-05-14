@@ -101,27 +101,32 @@ function toBuild() {
             package_linux_binary_files
         fi
     elif [[ "$OS_TYPE" == "Windows" ]]; then
-        # Build for Windows x64
         mkdir -p ${build_path}/${RUN_MODE}/windows/amd64
-
-        echo "current dir wiht:"$PWD
-
+        echo "ImageMagick version:"
+        /mingw64/bin/magick --version
         if [ ! -f ./favicon.ico ]; then
-          magick ./resources/imgs/Icon.png -strip -depth 8 -type TrueColor -compress None -define icon:auto-resize=256,128,64,32,16 ./favicon.ico
+          echo "Generating favicon.ico"
+          magick ./resources/imgs/Icon.png -strip -depth 8 -type TrueColor -compress None -define icon:auto-resize=256,128,64,32,16 ./favicon.ico 2>&1 | tee magick.log
+          if [ $? -ne 0 ]; then
+            cat magick.log
+            exit 1
+          fi
         fi
-
+        product_name=$(echo "$product_name" | sed 's/[^a-zA-Z0-9_-]/_/g')
         generate_windows_package_file
-
-        windres -i main.rc -o main.syso -O coff
-
-        CGO_LDFLAGS="-static -static-libgcc -static-libstdc++ -lmsvcrt -lglu32 -lopengl32 -lgdiplus -lole32 -luuid -lcomctl32 -lws2_32"
-        CC=x86_64-w64-mingw32-gcc CXX=x86_64-w64-mingw32-g++ GOOS=windows GOARCH=amd64 CGO_ENABLED=1 CGO_LDFLAGS=$CGO_LDFLAGS go build -a -trimpath -ldflags "${ld_flag_master} -H windowsgui -w -s" -o ${build_path}/${RUN_MODE}/windows/amd64/${product_name}.exe
+        echo "main.rc content:"
+        cat main.rc
+        echo "Running windres"
+        windres -i main.rc -o main.syso -O coff --verbose 2>&1 | tee windres.log
+        # shellcheck disable=SC2181
+        if [ $? -ne 0 ]; then
+          cat windres.log
+          exit 1
+        fi
+        CGO_LDFLAGS="-lmsvcrt -lglu32 -lopengl32 -lgdiplus -lole32 -luuid -lcomctl32 -lws2_32"
+        GOOS=windows GOARCH=amd64 CGO_ENABLED=1 CGO_LDFLAGS=$CGO_LDFLAGS go build -a -trimpath -ldflags "${ld_flag_master} -H windowsgui -w -s" -o ${build_path}/${RUN_MODE}/windows/amd64/${product_name}.exe
         chmod a+x ${build_path}/${RUN_MODE}/windows/amd64/${product_name}.exe
-
-        rm -rf ./main.rc
-        rm -rf ./main.syso
-        rm -rf ./favicon.ico
-
+        rm -rf ./main.rc ./main.syso ./favicon.ico
         package_windows_files "amd64"
     fi
 }
