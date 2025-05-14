@@ -83,25 +83,35 @@ jobs:
         if: runner.os == 'Windows'
         shell: pwsh
         run: |
+          # 安装 tree 命令
+          choco install tree -y
           $MESA_PATH = "${{ github.workspace }}\mesa"
           New-Item -ItemType Directory -Path $MESA_PATH -Force | Out-Null
-          # 下载 Mesa 25.1.0 运行时包
-          $ASSET_URL = "https://github.com/pal1000/mesa-dist-win/releases/download/25.1.0/mesa3d-25.1.0-release-msvc.7z"
+          
+          # 动态下载最新 Mesa 运行时包
+          $release = Invoke-RestMethod -Uri "https://api.github.com/repos/pal1000/mesa-dist-win/releases/latest" -Headers @{ Accept = "application/vnd.github.v3+json" }
+          $ASSET_URL = $release.assets | Where-Object { $_.name -match "mesa3d-.*-release-msvc\.7z" -and $_.name -notmatch "devel" } | Select-Object -First 1 -ExpandProperty browser_download_url
+          if (-not $ASSET_URL) {
+            Write-Error "Error: No mesa3d-*-release-msvc.7z asset found"
+            exit 1
+          }
+          Write-Host "Downloading: $ASSET_URL"
           Invoke-WebRequest -Uri $ASSET_URL -OutFile "mesa.7z"
           7z x mesa.7z -o"$MESA_PATH"
-          # 验证 lib/x64/ 和 opengl32.dll
-          if (-not (Test-Path "$MESA_PATH\lib\x64")) {
-            Write-Error "Error: lib/x64 directory not found"
+          # 显示目录结构
+          Write-Host "Mesa directory structure:"
+          tree $MESA_PATH
+          # 查找 opengl32.dll
+          $DLL_PATH = Get-ChildItem -Path $MESA_PATH -Recurse -Filter "opengl32.dll" | Select-Object -First 1 -ExpandProperty DirectoryName
+          if (-not $DLL_PATH) {
+            Write-Error "Error: opengl32.dll not found in $MESA_PATH"
             exit 1
           }
-          if (-not (Test-Path "$MESA_PATH\lib\x64\opengl32.dll")) {
-            Write-Error "Error: opengl32.dll not found in $MESA_PATH\lib\x64"
-            exit 1
-          }
-          # 设置环境变量指向 lib/x64/
-          $env:LIBGL_DRIVERS_PATH = "$MESA_PATH\lib\x64"
+          Write-Host "Found opengl32.dll in: $DLL_PATH"
+          # 设置环境变量
+          $env:LIBGL_DRIVERS_PATH = $DLL_PATH
           $env:GALLIUM_DRIVER = "llvmpipe"
-          $env:PATH = "$MESA_PATH\lib\x64;" + $env:PATH
+          $env:PATH = "$DLL_PATH;" + $env:PATH
           Write-Output "LIBGL_DRIVERS_PATH=$env:LIBGL_DRIVERS_PATH" >> $env:GITHUB_ENV
           Write-Output "GALLIUM_DRIVER=$env:GALLIUM_DRIVER" >> $env:GITHUB_ENV
           Write-Output "PATH=$env:PATH" >> $env:GITHUB_ENV
