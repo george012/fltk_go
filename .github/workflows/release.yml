@@ -87,9 +87,9 @@ jobs:
           New-Item -ItemType Directory -Path $MESA_PATH -Force | Out-Null
           choco install tree -y
           $release = Invoke-RestMethod -Uri "https://api.github.com/repos/pal1000/mesa-dist-win/releases/latest" -Headers @{ Accept = "application/vnd.github.v3+json" }
-          $ASSET_URL = $release.assets | Where-Object { $_.name -match "mesa3d-.*-release-mingw\.7z" -and $_.name -notmatch "devel" } | Select-Object -First 1 -ExpandProperty browser_download_url
+          $ASSET_URL = $release.assets | Where-Object { $_.name -match "mesa3d-.*-release-msvc\.7z" -and $_.name -notmatch "devel" } | Select-Object -First 1 -ExpandProperty browser_download_url
           if (-not $ASSET_URL) {
-            Write-Error "Error: No mesa3d-*-release-mingw.7z asset found"
+            Write-Error "Error: No mesa3d-*-release-msvc.7z asset found"
             exit 1
           }
           Write-Host "Downloading: $ASSET_URL"
@@ -110,14 +110,23 @@ jobs:
           Write-Output "GALLIUM_DRIVER=$env:GALLIUM_DRIVER" >> $env:GITHUB_ENV
           Write-Output "PATH=$env:PATH" >> $env:GITHUB_ENV
 
+#      - name: Set up MSYS2 environment
+#        if: runner.os == 'Windows'
+#        shell: pwsh
+#        run: |
+#          choco install msys2 -y --no-progress
+#          C:\tools\msys64\usr\bin\bash.exe -lc "pacman -Syu --noconfirm"
+#          C:\tools\msys64\usr\bin\bash -lc "pacman -S --noconfirm base-devel mingw-w64-x86_64-binutils mingw-w64-x86_64-cmake mingw-w64-x86_64-imagemagick"
+#          C:\tools\msys64\usr\bin\bash.exe -lc "curl -L -o binutils.pkg.tar.zst https://repo.msys2.org/mingw/mingw64/mingw-w64-x86_64-binutils-2.42-2-any.pkg.tar.zst && pacman -U --noconfirm binutils.pkg.tar.zst"
+#          echo "C:\tools\msys64\mingw64\bin" | Out-File -FilePath $env:GITHUB_PATH -Encoding ASCII -Append
       - name: Set up MSYS2 environment
         if: runner.os == 'Windows'
         shell: pwsh
         run: |
           choco install msys2 -y --no-progress
-          C:\tools\msys64\usr\bin\bash.exe -lc "pacman -Syu --noconfirm"
-          C:\tools\msys64\usr\bin\bash -lc "pacman -S --noconfirm base-devel mingw-w64-x86_64-binutils mingw-w64-x86_64-cmake mingw-w64-x86_64-imagemagick"
-          C:\tools\msys64\usr\bin\bash.exe -lc "curl -L -o binutils.pkg.tar.zst https://repo.msys2.org/mingw/mingw64/mingw-w64-x86_64-binutils-2.42-2-any.pkg.tar.zst && pacman -U --noconfirm binutils.pkg.tar.zst"
+          C:\tools\msys64\usr\bin\bash.exe -lc "pacman -Syu --noconfirm --needed"
+          C:\tools\msys64\usr\bin\bash.exe -lc "pacman -S --noconfirm --needed base-devel mingw-w64-x86_64-cmake mingw-w64-x86_64-imagemagick"
+          C:\tools\msys64\usr\bin\bash.exe -lc "curl -L -o gcc.pkg.tar.zst https://repo.msys2.org/mingw/mingw64//mingw-w64-x86_64-gcc-14.2.0-3-x86_64.pkg.tar.zst && curl -L -o g++.pkg.tar.zst https://repo.msys2.org/mingw/mingw64//mingw-w64-x86_64-g++-14.2.0-3-x86_64.pkg.tar.zst && curl -L -o binutils.pkg.tar.zst https://repo.msys2.org/mingw/mingw64//mingw-w64-x86_64-binutils-2.42-2-x86_64.pkg.tar.zst && pacman -U --noconfirm gcc.pkg.tar.zst g++.pkg.tar.zst binutils.pkg.tar.zst"
           echo "C:\tools\msys64\mingw64\bin" | Out-File -FilePath $env:GITHUB_PATH -Encoding ASCII -Append
 
       - name: Build for Windows
