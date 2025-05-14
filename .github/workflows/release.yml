@@ -120,6 +120,16 @@ jobs:
           C:\tools\msys64\usr\bin\bash -lc "pacman -S --noconfirm base-devel mingw-w64-x86_64-binutils=2.42-2 mingw-w64-x86_64-cmake mingw-w64-x86_64-imagemagick"
           echo "C:\tools\msys64\mingw64\bin" | Out-File -Encoding ASCII -Append $env:GITHUB_PATH
 
+      - name: Set up MSYS2 environment
+        if: runner.os == 'Windows'
+        shell: pwsh
+        run: |
+          choco install msys2 -y --no-progress
+          C:\tools\msys64\usr\bin\bash.exe -lc "pacman -Syu --noconfirm"
+          C:\tools\msys64\usr\bin\bash -lc "pacman -S --noconfirm base-devel mingw-w64-x86_64-binutils=2.42-2 mingw-w64-x86_64-cmake mingw-w64-x86_64-imagemagick"
+          C:\tools\msys64\usr\bin\bash.exe -lc "curl -L -o binutils.pkg.tar.zst https://repo.msys2.org/mingw/x86_64/mingw-w64-x86_64-binutils-2.42-2-x86_64.pkg.tar.zst && pacman -U --noconfirm binutils.pkg.tar.zst"
+          echo "C:\tools\msys64\mingw64\bin" | Out-File -FilePath $env:GITHUB_PATH -Encoding ASCII -Append
+
       - name: Build for Windows
         if: runner.os == 'Windows'
         shell: bash
