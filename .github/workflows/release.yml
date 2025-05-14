@@ -81,22 +81,55 @@ jobs:
 
       - name: Install Mesa For Windows
         if: runner.os == 'Windows'
-        uses: f3d-app/install-mesa-windows-action@v1
-        with:
-          path: ${{github.workspace}}\mesa
-          version: 25.0.3
-
-      - name: Verify Mesa Installation
-        if: runner.os == 'Windows'
         shell: pwsh
         run: |
           $MESA_PATH = "${{ github.workspace }}\mesa"
-          if (-not (Test-Path $MESA_PATH)) {
-            Write-Error "Error: Mesa directory not found"
+          New-Item -ItemType Directory -Path $MESA_PATH -Force | Out-Null
+          $release = Invoke-RestMethod -Uri "https://api.github.com/repos/pal1000/mesa-dist-win/releases/latest" -Headers @{ Accept = "application/vnd.github.v3+json" }
+          $ASSET_URL = $release.assets | Where-Object { $_.name -match "mesa3d-.*-release-msvc\.7z" } | Select-Object -ExpandProperty browser_download_url
+          if (-not $ASSET_URL) {
+            Write-Error "Error: No mesa3d-*-release-msvc.7z asset found"
             exit 1
           }
-          Write-Host "Mesa contents:"
+          Invoke-WebRequest -Uri $ASSET_URL -OutFile "mesa.7z"
+          7z x mesa.7z -o"$MESA_PATH"
+          if (Test-Path "$MESA_PATH\x64") {
+            Move-Item "$MESA_PATH\x64\*" "$MESA_PATH" -Force
+            Remove-Item "$MESA_PATH\x64" -Recurse -Force
+          }
           Get-ChildItem $MESA_PATH
+          if (-not (Test-Path "$MESA_PATH\opengl32.dll")) {
+            Write-Error "Error: opengl32.dll not found in $MESA_PATH"
+            exit 1
+          }
+          # 设置环境变量
+          $env:LIBGL_DRIVERS_PATH = "$MESA_PATH"
+          $env:GALLIUM_DRIVER = "llvmpipe"
+          $env:PATH = "$MESA_PATH;" + $env:PATH
+          $env:MESA_GL_VERSION_OVERRIDE = "4.6"
+          $env:MESA_GLSL_VERSION_OVERRIDE = "460"
+          # 保存到 GITHUB_ENV 以供后续步骤使用
+          Write-Output "LIBGL_DRIVERS_PATH=$env:LIBGL_DRIVERS_PATH" >> $env:GITHUB_ENV
+          Write-Output "GALLIUM_DRIVER=$env:GALLIUM_DRIVER" >> $env:GITHUB_ENV
+          Write-Output "PATH=$env:PATH" >> $env:GITHUB_ENV
+          Write-Output "MESA_GL_VERSION_OVERRIDE=$env:MESA_GL_VERSION_OVERRIDE" >> $env:GITHUB_ENV
+          Write-Output "MESA_GLSL_VERSION_OVERRIDE=$env:MESA_GLSL_VERSION_OVERRIDE" >> $env:GITHUB_ENV
+
+      - name: Verify Mesa Installation
+        shell: pwsh
+        run: |
+          $MESA_PATH = "${{ github.workspace }}\mesa"
+          Write-Host "MESA_PATH: $MESA_PATH"
+          Write-Host "LIBGL_DRIVERS_PATH: $env:LIBGL_DRIVERS_PATH"
+          Write-Host "GALLIUM_DRIVER: $env:GALLIUM_DRIVER"
+          Write-Host "PATH: $env:PATH"
+          if (-not (Test-Path "$MESA_PATH\opengl32.dll")) {
+            Write-Error "Error: Mesa directory not found or opengl32.dll missing"
+            exit 1
+          }
+          Get-ChildItem $MESA_PATH
+        env:
+          APP_VERSION: v0.0.77
 
       - name: Set up MSYS2 environment
         if: runner.os == 'Windows'
@@ -112,8 +145,6 @@ jobs:
         if: runner.os == 'Windows'
         shell: bash
         run: |
-          echo "MESA_PATH=${{ github.workspace }}/mesa" >> $GITHUB_ENV
-          echo "PATH=${MESA_PATH};$PATH" >> $GITHUB_ENV
           cd ./examples
           chmod a+x ./build_example.sh
           ./build_example.sh
