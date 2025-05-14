@@ -81,27 +81,10 @@ jobs:
 
       - name: Install Mesa For Windows
         if: runner.os == 'Windows'
-        shell: pwsh
-        run: |
-          $MESA_PATH = "${{ github.workspace }}\mesa"
-          New-Item -ItemType Directory -Path $MESA_PATH -Force | Out-Null
-          $release = Invoke-RestMethod -Uri "https://api.github.com/repos/pal1000/mesa-dist-win/releases/latest" -Headers @{ Authorization = "Bearer ${{ secrets.GITHUB_TOKEN }}"; Accept = "application/vnd.github.v3+json" }
-          $ASSET_URL = $release.assets | Where-Object { $_.name -match "mesa3d-.*-release-msvc\.7z" } | Select-Object -ExpandProperty browser_download_url
-          if (-not $ASSET_URL) {
-            Write-Error "Error: No mesa3d-*-release-mingw.7z asset found"
-            exit 1
-          }
-          Invoke-WebRequest -Uri $ASSET_URL -OutFile "mesa.7z"
-          7z x mesa.7z -o"$MESA_PATH"
-          if (Test-Path "$MESA_PATH\x64") {
-            Move-Item "$MESA_PATH\x64\*" "$MESA_PATH" -Force
-            Remove-Item "$MESA_PATH\x64" -Recurse -Force
-          }
-          Get-ChildItem $MESA_PATH
-          if (-not (Test-Path "$MESA_PATH\opengl32.dll")) {
-            Write-Error "Error: opengl32.dll not found in $MESA_PATH"
-            exit 1
-          }
+        uses: f3d-app/install-mesa-windows-action@v2
+        with:
+          path: ${{github.workspace}}/mesa
+          version: 25.0.3
 
       - name: Verify Mesa Installation
         if: runner.os == 'Windows'
@@ -120,10 +103,9 @@ jobs:
         shell: pwsh
         run: |
           choco install msys2
-          C:\tools\msys64\usr\bin\bash.exe -lc "pacman -Syu --noconfirm"
-          C:\tools\msys64\usr\bin\bash.exe -lc "pacman -S --noconfirm base-devel mingw-w64-x86_64-headers mingw-w64-x86_64-crt git mingw-w64-x86_64-cmake"
-          C:\tools\msys64\usr\bin\bash.exe -lc "curl -O https://repo.msys2.org/mingw/mingw64/mingw-w64-x86_64-binutils-2.42-2-any.pkg.tar.zst && pacman -U --noconfirm mingw-w64-x86_64-binutils-2.42-2-any.pkg.tar.zst"
-          C:\tools\msys64\usr\bin\bash.exe -lc "curl -O https://repo.msys2.org/mingw/mingw64/mingw-w64-x86_64-gcc-14.1.0-3-any.pkg.tar.zst && pacman -U --noconfirm mingw-w64-x86_64-gcc-14.1.0-3-any.pkg.tar.zst"
+          refreshenv
+          C:\tools\msys64\usr\bin\bash -lc "pacman -Syu --noconfirm"
+          C:\tools\msys64\usr\bin\bash -lc "pacman -S --noconfirm base-devel mingw-w64-x86_64-toolchain git mingw-w64-x86_64-cmake"
           echo "C:\tools\msys64\mingw64\bin;$env:PATH" | Out-File -Encoding ASCII -Append $env:GITHUB_PATH
 
       - name: Build for Windows
