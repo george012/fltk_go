@@ -103,7 +103,7 @@ function toBuild() {
     elif [[ "$OS_TYPE" == "Windows" ]]; then
         mkdir -p ${build_path}/${RUN_MODE}/windows/amd64
         echo "ImageMagick version:"
-        /mingw64/bin/magick --version
+        magick --version
         if [ ! -f ./favicon.ico ]; then
           echo "Generating favicon.ico"
           magick ./resources/imgs/Icon.png -strip -depth 8 -type TrueColor -compress None -define icon:auto-resize=256,128,64,32,16 ./favicon.ico 2>&1 | tee magick.log
