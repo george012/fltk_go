@@ -86,7 +86,7 @@ jobs:
           $MESA_PATH = "${{ github.workspace }}\mesa"
           New-Item -ItemType Directory -Path $MESA_PATH -Force | Out-Null
           $release = Invoke-RestMethod -Uri "https://api.github.com/repos/pal1000/mesa-dist-win/releases/latest" -Headers @{ Authorization = "Bearer ${{ secrets.GITHUB_TOKEN }}"; Accept = "application/vnd.github.v3+json" }
-          $ASSET_URL = $release.assets | Where-Object { $_.name -match "mesa3d-.*-release-mingw\.7z" } | Select-Object -ExpandProperty browser_download_url
+          $ASSET_URL = $release.assets | Where-Object { $_.name -match "mesa3d-.*-release-msvc\.7z" } | Select-Object -ExpandProperty browser_download_url
           if (-not $ASSET_URL) {
             Write-Error "Error: No mesa3d-*-release-mingw.7z asset found"
             exit 1
