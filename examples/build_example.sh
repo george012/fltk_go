@@ -117,7 +117,7 @@ function toBuild() {
         echo "main.rc content:"
         cat main.rc
         echo "Running windres"
-#        windres -i main.rc -o main.syso -O coff --verbose 2>&1 | tee windres.log
+        windres -i main.rc -o main.syso -O coff --verbose 2>&1 | tee windres.log
         # shellcheck disable=SC2181
         if [ $? -ne 0 ]; then
           cat windres.log
