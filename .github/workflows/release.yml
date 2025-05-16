@@ -126,7 +126,7 @@ jobs:
           $Env:Path = ($Env:Path -split ';' | Where-Object { $_ -notlike '*mingw*' -and $_ -notlike '*chocolatey*' }) -join ';'
           Invoke-WebRequest -Uri https://github.com/msys2/msys2-installer/releases/download/2024-10-07/msys2-x86_64-20241007.exe -OutFile msys2-install.exe
           .\msys2-install.exe --script --accept-licenses --confirm-command --root C:/msys64
-          C:\msys64\usr\bin\bash.exe -lc "pacman -S --noconfirm base-devel mingw-w64-x86_64-binutils mingw-w64-x86_64-cmake mingw-w64-x86_64-imagemagick"
+          C:\msys64\usr\bin\bash.exe -lc "pacman -Syu --noconfirm --needed && pacman -S --noconfirm --needed base-devel mingw-w64-x86_64-gcc mingw-w64-x86_64-g++ mingw-w64-x86_64-binutils mingw-w64-x86_64-cmake mingw-w64-x86_64-imagemagick"
           setx MINGW64 C:\msys64\mingw64 /M; $Env:MINGW64 = "C:\msys64\mingw64"; $Env:Path += ";$Env:MINGW64\bin"; echo "$Env:MINGW64\bin" | Out-File -FilePath $env:GITHUB_PATH -Encoding ASCII -Append
 
       - name: Build for Windows
