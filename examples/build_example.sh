@@ -148,7 +148,9 @@ function package_linux_binary_files(){
 function generate_windows_package_file() {
     # 动态生成 main.rc 文件
     cat <<EOL > main.rc
-#include "winver.h"
+// 修改点1：明确包含路径（使用尖括号）
+#include <windows.h>
+#include <winver.h>
 
 1 ICON "favicon.ico"
 
@@ -167,7 +169,8 @@ FILESUBTYPE 0x0L
 BEGIN
     BLOCK "StringFileInfo"
     BEGIN
-        BLOCK "040904E4"
+        // 修改点2：更新字符集标识（040904B0 替代 040904E4）
+        BLOCK "040904B0"
         BEGIN
             VALUE "CompanyName", "Free"
             VALUE "FileDescription", "${product_name} Application"
@@ -185,6 +188,9 @@ BEGIN
     END
 END
 EOL
+
+    # 修改点3：添加 windres 编译时的显式包含路径
+    windres -i main.rc -o main.syso -O coff --verbose -I/mingw64/x86_64-w64-mingw32/include 2>&1 | tee windres.log
 }
 
 function package_windows_files() {
